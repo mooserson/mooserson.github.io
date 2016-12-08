@@ -253,13 +253,13 @@
 		margin: 0 0 1.5em 0;
 	}
 
-		form > .field {
-			margin: 0 0 1.5em 0;
-		}
+	form > .field {
+		margin: 0 0 1.5em 0;
+	}
 
-			form > .field > :last-child {
-				margin-bottom: 0;
-			}
+	form > .field > :last-child {
+		margin-bottom: 0;
+	}
 
 	label {
 		color: #313f47;
@@ -267,6 +267,8 @@
 		font-size: 0.9em;
 		margin: 0 0 0.75em 0;
 	}
+
+	.antispam { display:none;}
 
 	input[type="text"],
 	input[type="password"],

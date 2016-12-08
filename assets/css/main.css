@@ -491,32 +491,30 @@
 			z-index: 3;
 		}
 
-			.chordinate-info{
+			.info{
 				width: 68%;
   			position: absolute;
-  			top: 43em;
-  			left: 5em;
 				z-index: -1;
+				font-weight: bold;
 			}
 
-			.downbeat-info{
-				width: 68%;
-  			position: absolute;
+			.chordinate{				
+				top: 43em;
+				left: 5em;
+			}
+
+			.downbeat{
   			top: 60em;
   			left: 5em;
-				z-index: -1;
 			}
 
-			.bartist-info{
-				width: 68%;
-  			position: absolute;
+			.bartist{
   			top: 75em;
   			left: 5em;
-				z-index: -1;
 			}
 
 			ul.projects img{
-				opacity: .09;
+				opacity: .05;
 				transition-property: opacity;
 				transition-duration: .8s;
 			}

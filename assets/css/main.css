@@ -27,7 +27,7 @@
 		line-height: 1;
 	}
 
-	ol, ul {
+	ol, ul, li {
 		list-style: none;
 	}
 
@@ -370,7 +370,6 @@
 		input[type="radio"] + label {
 			text-decoration: none;
 			color: #414f57;
-			cursor: pointer;
 			display: inline-block;
 			font-size: 1em;
 			font-weight: 300;
@@ -489,7 +488,42 @@
 
 		ul li {
 			padding-left: 0.5em;
+			z-index: 3;
 		}
+
+			.chordinate-info{
+				width: 68%;
+  			position: absolute;
+  			top: 43em;
+  			left: 5em;
+				z-index: -1;
+			}
+
+			.downbeat-info{
+				width: 68%;
+  			position: absolute;
+  			top: 60em;
+  			left: 5em;
+				z-index: -1;
+			}
+
+			.bartist-info{
+				width: 68%;
+  			position: absolute;
+  			top: 75em;
+  			left: 5em;
+				z-index: -1;
+			}
+
+			ul.projects img{
+				opacity: .09;
+				transition-property: opacity;
+				transition-duration: .8s;
+			}
+
+			ul.projects img:hover{
+				opacity: 1
+			}
 
 		ul.alt {
 			list-style: none;
@@ -507,7 +541,6 @@
 				}
 
 		ul.icons {
-			cursor: default;
 			list-style: none;
 			padding-left: 0;
 			margin-top: -0.675em;
@@ -576,7 +609,6 @@
 			}
 
 		ul.actions {
-			cursor: default;
 			list-style: none;
 			padding-left: 0;
 		}
@@ -604,102 +636,6 @@
 			margin-left: 1.5em;
 		}
 
-/* Button */
-
-	input[type="submit"],
-	input[type="reset"],
-	input[type="button"],
-	button,
-	.button {
-		-moz-appearance: none;
-		-webkit-appearance: none;
-		-ms-appearance: none;
-		appearance: none;
-		-moz-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		-webkit-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		-ms-transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		display: inline-block;
-		height: 2.75em;
-		line-height: 2.75em;
-		padding: 0 1.5em;
-		background-color: transparent;
-		border-radius: 4px;
-		border: solid 1px #c8cccf;
-		color: #414f57 !important;
-		cursor: pointer;
-		text-align: center;
-		text-decoration: none;
-		white-space: nowrap;
-	}
-
-		input[type="submit"]:hover,
-		input[type="reset"]:hover,
-		input[type="button"]:hover,
-		button:hover,
-		.button:hover {
-			border-color: #ff7496;
-			color: #ff7496 !important;
-		}
-
-		input[type="submit"].icon,
-		input[type="reset"].icon,
-		input[type="button"].icon,
-		button.icon,
-		.button.icon {
-			padding-left: 1.35em;
-		}
-
-			input[type="submit"].icon:before,
-			input[type="reset"].icon:before,
-			input[type="button"].icon:before,
-			button.icon:before,
-			.button.icon:before {
-				margin-right: 0.5em;
-			}
-
-		input[type="submit"].fit,
-		input[type="reset"].fit,
-		input[type="button"].fit,
-		button.fit,
-		.button.fit {
-			display: block;
-			width: 100%;
-			margin: 0 0 0.75em 0;
-		}
-
-		input[type="submit"].small,
-		input[type="reset"].small,
-		input[type="button"].small,
-		button.small,
-		.button.small {
-			font-size: 0.8em;
-		}
-
-		input[type="submit"].big,
-		input[type="reset"].big,
-		input[type="button"].big,
-		button.big,
-		.button.big {
-			font-size: 1.35em;
-		}
-
-		input[type="submit"].disabled, input[type="submit"]:disabled,
-		input[type="reset"].disabled,
-		input[type="reset"]:disabled,
-		input[type="button"].disabled,
-		input[type="button"]:disabled,
-		button.disabled,
-		button:disabled,
-		.button.disabled,
-		.button:disabled {
-			-moz-pointer-events: none;
-			-webkit-pointer-events: none;
-			-ms-pointer-events: none;
-			pointer-events: none;
-			opacity: 0.5;
-		}
-
 /* Main */
 
 	#main {
@@ -709,7 +645,6 @@
 		padding: 4.5em 3em 3em 3em ;
 		background: #ffffff;
 		border-radius: 4px;
-		cursor: default;
 		opacity: 0.95;
 		text-align: center;
 		-moz-transform-origin: 50% 50%;
@@ -784,7 +719,6 @@
 		width: 100%;
 		padding: 1.5em 0 0 0;
 		color: rgba(255, 255, 255, 0.75);
-		cursor: default;
 		text-align: center;
 	}
 

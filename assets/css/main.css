@@ -490,27 +490,27 @@
   			position: absolute;
 				z-index: -1;
 				font-weight: bold;
+				left: 16%;
 			}
 
 			.chordinate{
-				top: 43em;
-				left: 5em;
+				top: 47%;
 			}
 
 			.downbeat{
-  			top: 60em;
-  			left: 5em;
+				top: 65%;
 			}
 
 			.bartist{
-  			top: 75em;
-  			left: 5em;
+				top: 82%;
 			}
 
 			ul.projects img{
+				width: 100%;
 				opacity: .05;
 				transition-property: opacity;
 				transition-duration: .8s;
+
 			}
 
 			ul.projects img:hover{
@@ -634,7 +634,7 @@
 		position: relative;
 		max-width: 100%;
 		min-width: 30em;
-		padding: 4.5em 3em 3em 3em ;
+		padding: 4.5em 3em 0 3em ;
 		background: #ffffff;
 		border-radius: 4px;
 		opacity: 0.95;

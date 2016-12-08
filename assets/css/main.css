@@ -487,8 +487,11 @@
 	}
 
 		ul li {
-			padding-left: 0.5em;
 			z-index: 3;
+		}
+
+		ul.projects {
+			padding: 0;
 		}
 
 			.info{
@@ -498,7 +501,7 @@
 				font-weight: bold;
 			}
 
-			.chordinate{				
+			.chordinate{
 				top: 43em;
 				left: 5em;
 			}
@@ -639,7 +642,7 @@
 	#main {
 		position: relative;
 		max-width: 100%;
-		min-width: 27em;
+		min-width: 30em;
 		padding: 4.5em 3em 3em 3em ;
 		background: #ffffff;
 		border-radius: 4px;

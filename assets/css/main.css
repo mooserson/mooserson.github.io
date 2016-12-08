@@ -719,6 +719,8 @@
 			padding: 0;
 			font-size: 0.9em;
 			list-style: none;
+			position: fixed;
+			top: 98%;
 		}
 
 			#footer .copyright li {
@@ -773,6 +775,8 @@
 		min-height: 100%;
 		padding: 1.5em;
 		z-index: 2;
+
+		margin-bottom: 4em;
 	}
 
 		#wrapper > * {
@@ -794,4 +798,11 @@
 
 		body.is-ie #wrapper {
 			height: 100%;
+		}
+
+		#wrapper .footer-img {
+			position: fixed;
+		  top: 51%;
+		  height: 60%;
+			z-index: 0;
 		}

@@ -721,11 +721,12 @@
 			padding: 0;
 			font-size: 0.9em;
 			list-style: none;
-			position: fixed;
-			top: 112%;
+			position: relative;
+			top: 114%;
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
+			z-index: 1;
 		}
 
 			#footer .copyright li {
@@ -741,6 +742,9 @@
 /* Wrapper */
 
 	#wrapper {
+
+		max-width: 100%;
+    overflow-x: hidden;
 
 		background-color: #ffffff;
 		background: -moz-linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
@@ -779,7 +783,6 @@
 		padding: 1.5em;
 		z-index: 2;
 
-		margin-bottom: 4em;
 	}
 
 		#wrapper > * {
@@ -806,6 +809,7 @@
 
 		#wrapper .footer-img {
 			position: absolute;
-		  top: 52%;
+		  top: 53%;
 			z-index: -1;
+			right: -5%;
 		}

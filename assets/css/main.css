@@ -105,7 +105,7 @@
 			background-image: linear-gradient(60deg, rgba(255, 165, 150, 0.5) 5%, rgba(0, 228, 255, 0.35));
 			background-repeat: no-repeat;
 			background-size: cover;
-			background-position: center center;
+			background-position: center;
 			-moz-transition: opacity 1.75s ease-out;
 			-webkit-transition: opacity 1.75s ease-out;
 			-ms-transition: opacity 1.75s ease-out;
@@ -717,12 +717,10 @@
 	}
 
 		#footer .copyright {
-			margin: 0;
+			margin: 13vh 0 13vh 0;
 			padding: 0;
 			font-size: 0.9em;
 			list-style: none;
-			position: absolute;
-			top: 112%;
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
@@ -747,15 +745,15 @@
     overflow-x: hidden;
 
 		background-color: #ffffff;
-		background: -moz-linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
-		background: -webkit-linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
-		background: -ms-linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
-		background: linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
+		background: url(../../images/nick_small.png), -moz-linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
+		background: url(../../images/nick_small.png), -webkit-linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
+		background: url(../../images/nick_small.png), -ms-linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
+		background: url(../../images/nick_small.png), linear-gradient(60deg, rgba(255, 165, 150, 0.5) 20%, rgba(0, 228, 255, 0.35));
 		-webkit-background-size: cover;
 		-moz-background-size: cover;
 		-o-background-size: cover;
-		background-size: cover;
-		background-position: center;
+		background-size: auto, cover;
+		background-position: bottom, center;
 		background-repeat: no-repeat;
 
 		display: -moz-flex;
@@ -804,12 +802,4 @@
 
 		body.is-ie #wrapper {
 			height: 100%;
-		}
-
-
-		#wrapper .footer-img {
-			position: absolute;
-		  top: 53%;
-			z-index: -1;
-			right: -5%;
 		}

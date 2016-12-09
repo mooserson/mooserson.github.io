@@ -720,14 +720,15 @@
 			font-size: 0.9em;
 			list-style: none;
 			position: fixed;
-			top: 98%;
+			top: 101%;
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
 		}
 
 			#footer .copyright li {
 				display: inline-block;
-				margin: 0 0 0 0.45em;
-				padding: 0 0 0 0.85em;
-				border-left: solid 1px rgba(255, 255, 255, 0.5);
+			  padding: 0 5em 0 2em;
 				line-height: 1;
 			}
 
@@ -799,6 +800,7 @@
 		body.is-ie #wrapper {
 			height: 100%;
 		}
+
 
 		#wrapper .footer-img {
 			position: fixed;

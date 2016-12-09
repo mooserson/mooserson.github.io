@@ -84,6 +84,8 @@
 
 	body {
 		height: 100%;
+		max-width: 100%;
+    overflow-x: hidden;
 	}
 
 		body:after {
@@ -720,7 +722,7 @@
 			font-size: 0.9em;
 			list-style: none;
 			position: fixed;
-			top: 105%;
+			top: 112%;
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
@@ -805,7 +807,5 @@
 		#wrapper .footer-img {
 			position: absolute;
 		  top: 52%;
-		  height: auto;
 			z-index: -1;
-			width: 100%;
 		}

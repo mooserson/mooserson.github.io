@@ -1,0 +1,16 @@
+form{
+	
+	background: linear-gradient(to right, transparent, mistyrose),
+ 	url("https://images.unsplash.com/photo-1470963162340-def4fd43095d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80");
+	/*background-repeat: round;*/
+	background-position: 60% 0%;
+	/*box-shadow: 0 0 8px 8px white inset;*/
+}
+   
+table{
+	background-color: rgba(170, 170, 170, .1)
+}
+
+tbody{
+	background-color: rgba(288, 240, 170, .2)
+}

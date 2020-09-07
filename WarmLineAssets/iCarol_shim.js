@@ -4,12 +4,14 @@
 // Select report type (optional, any WL, could be configured for CH too)
 // Call review (coordinators only)
 
-$('head').append('<link rel="stylesheet" type="text/css" href="style.css">');
+// include global style sheet
+$('head').append('<link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/mooserson/mooserson.github.io/master/WarmLineAssets/CSS/icarol_global.css">');
+
 let new_call_report_url = /(https?): \/\/(na0.icarol.com\/secure\/reports\/ReportView.\.aspx).*(&Action=New).*/;
 let chatboards_url = /(https?): \/\/(na0.icarol.com\/secure\/forum.*/;
 let current_url = window.location.href
 
-// New Call report JS (check peer services)
+// New Call report JS (check peer services, no css yet)
 if(current_url.match(new_call_report_url)){
   var peer_checkbox = $("[fieldname='Peer Services'] >");
 
@@ -26,8 +28,9 @@ if(current_url.match(new_call_report_url)){
 
   peerServicesEnforcer()
   
-  // Chatboard JS (sort button)
+  // Chatboard JS (sort button, css)
 } else if (current_url.match(chatboards_url)) {
+  $('head').append($("<script src='https://kit.fontawesome.com/29c8b6a8a8.js' crossorigin='anonymous'></script>"))
   $('head').append($("<script src='https://kit.fontawesome.com/29c8b6a8a8.js' crossorigin='anonymous'></script>"))
 
   // add button
@@ -53,6 +56,4 @@ if(current_url.match(new_call_report_url)){
     tbody.append(reverse_posts);
   }
   // Main contacts (background)
-} else if ()
-
 }

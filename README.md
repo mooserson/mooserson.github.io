@@ -1,2 +1,1 @@
-#[Portfolio page][live]
-[live]: http://paulcathey.com
+#[Portfolio page]: https://paulcathey.com

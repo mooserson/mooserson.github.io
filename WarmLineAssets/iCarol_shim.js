@@ -7,8 +7,8 @@
 // include global style sheet
 $('head').append('<link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/mooserson/mooserson.github.io/master/WarmLineAssets/CSS/icarol_global.css">');
 
-let new_call_report_url = /(https?): \/\/(na0.icarol.com\/secure\/reports\/ReportView.\.aspx).*(&Action=New).*/;
-let chatboards_url = /(https?): \/\/(na0.icarol.com\/secure\/forum.*/;
+let new_call_report_url = /(https?):\/\/(na0.icarol.com\/secure\/reports\/ReportView.\.aspx).*(&Action=New).*/;
+let chatboards_url = /(https?):\/\/(na0.icarol.com\/secure\/forum).*/;
 let current_url = window.location.href
 
 // New Call report JS (check peer services, no css yet)

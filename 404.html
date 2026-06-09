@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Not Found &middot; Paul Cathey</title>
+<script>
+  // GitHub Pages project paths are case-sensitive (/fallen 404s, /Fallen works).
+  // This page is served for every 404 on the domain, so fix the casing of the
+  // first path segment and redirect when it matches a known project site.
+  (function () {
+    var projects = [
+      "Fallen",
+      "ragbrai26",
+      "columbia",
+      "PELClicker",
+      "IEP_504_FBA_BIP_Explainer",
+      "the-Peasants-Pallette",
+      "distraction_timer",
+    ];
+    var parts = location.pathname.split("/");
+    var first = (parts[1] || "").toLowerCase();
+    for (var i = 0; i < projects.length; i++) {
+      if (projects[i].toLowerCase() === first && parts[1] !== projects[i]) {
+        parts[1] = projects[i];
+        location.replace(parts.join("/") + location.search + location.hash);
+        return;
+      }
+    }
+  })();
+</script>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #07080d;
+    color: #b9c2d0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+  h1 { font-size: 48px; margin: 0 0 8px; color: #e9d9a8; font-weight: 600; }
+  p { margin: 4px 0; opacity: 0.7; }
+  a { color: #e9d9a8; }
+</style>
+</head>
+<body>
+  <div>
+    <h1>404</h1>
+    <p>That page doesn't exist.</p>
+    <p><a href="/">paulcathey.com</a></p>
+  </div>
+</body>
+</html>

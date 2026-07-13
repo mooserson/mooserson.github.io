@@ -100,7 +100,15 @@
     padding: 16px 22px;
     box-shadow: 6px 6px 0 rgba(0,0,0,.25);
     position: relative;
+    overflow: hidden;
   }
+  .poem img.bard {
+    float: left; width: 104px; height: auto; margin: 3px 16px 6px 0;
+    border: 3px ridge #b08d00; background: #fff;
+  }
+  .poem img.bard.wide { width: 168px; }
+  .polaroid.tall { width: 230px; }
+  .polaroid.tall .frame, .polaroid.tall .frame img { height: auto; }
   blockquote.poem cite { display: block; text-align: right; margin-top: 10px; font-size: 15px; }
   .xlate {
     display: block; max-height: 0; overflow: hidden; opacity: 0;
@@ -339,13 +347,22 @@
   <h2>🖋️ EL RINCÓN POÉTICO / LE COIN DES POÈTES 🖋️</h2>
 
   <blockquote class="poem" tabindex="0">
+    <img class="bard" src="pics/camus.jpg" alt="Albert Camus in a suit, holding a soccer ball, against a green pitch background" title="Albert Camus, warming up">
     «Tout ce que je sais de plus sûr à propos de la moralité et des obligations des hommes, c'est au football que je le dois.»
     <span class="xlate">"All that I know most surely about morality and the obligations of men, I owe to football."</span>
     <cite>— Albert Camus, goalkeeper first, Nobel laureate as a fallback plan</cite>
     <span class="footnote xlate-hint">(hover for the English — the meaning, like a well-struck ball, arrives a beat after the touch)</span>
   </blockquote>
 
+  <div class="center" style="margin:22px 0">
+    <div class="polaroid tall" style="display:inline-block">
+      <div class="frame"><img src="pics/day115.jpg" alt="a person juggling a soccer ball in a driveway, captioned: day 115 teaching myself how to juggle a soccer ball while reciting The Stranger by Albert Camus"></div>
+      <b>The tradition endures.</b> Day 115 of juggling while reciting <i>The Stranger</i>. Camus would have understood. Camus would have counted the touches.
+    </div>
+  </div>
+
   <blockquote class="poem" tabindex="0">
+    <img class="bard wide" src="pics/lorca.jpg" alt="Federico García Lorca seated beside a Unión Radio microphone" title="F. G. Lorca, live from Unión Radio, calling the match">
     <i>A las dos de la tarde.<br>
     Eran las dos en punto de la tarde.<br>
     Un sofá ya estaba dispuesto,<br>
@@ -363,6 +380,7 @@
   </blockquote>
 
   <blockquote class="poem">
+    <img class="bard" src="pics/unamuno.jpg" alt="Miguel de Unamuno, white-bearded, in round spectacles" title="Miguel de Unamuno, unimpressed but present">
     Unamuno wrote of <i>the tragic sense of life</i> — the ache of wanting something eternal while knowing nothing is. He was describing, with eerie precision, supporting a national team in a knockout round. Come feel infinite for ninety minutes plus stoppage.
     <cite>— Miguel de Unamuno, paraphrased beyond what he'd tolerate</cite>
   </blockquote>

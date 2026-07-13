@@ -201,6 +201,22 @@
   img.pixel { image-rendering: pixelated; max-width: 100%; height: auto; }
   .gifrow { text-align: center; }
 
+  /* the MIDI jukebox */
+  #jukebox {
+    background: #000; border: 4px inset #555; color: #39ff14;
+    font-family: "Courier New", monospace; font-size: 14px;
+    padding: 8px 14px; margin: 14px auto 2px; max-width: 640px;
+    display: flex; gap: 12px; align-items: center; justify-content: center;
+    flex-wrap: wrap;
+  }
+  #anthemBtn {
+    font-family: inherit; font-size: 14px; font-weight: bold;
+    background: #222; color: #ffd900; border: 3px outset #888;
+    padding: 6px 12px; cursor: pointer; white-space: nowrap;
+  }
+  #anthemBtn:active { border-style: inset; }
+  #nowplaying { letter-spacing: 1px; }
+
   /* the big floating translation button */
   #langbtn {
     position: fixed; right: 16px; bottom: 16px; z-index: 10000;
@@ -248,6 +264,10 @@
     <div class="flag-bar" aria-hidden="true">
       <div style="background:#a1131f"></div><div style="background:#ffd900"></div><div style="background:#a1131f"></div>
       <div style="background:#0055a4"></div><div style="background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd"></div><div style="background:#ef4135"></div>
+    </div>
+    <div id="jukebox">
+      <button id="anthemBtn" type="button">▶ STRIKE UP THE ANTHEMS</button>
+      <span id="nowplaying">MIDI jukebox armed · 2 himnos · alternating · authentic 1998 sound card</span>
     </div>
   </div>
 
@@ -502,6 +522,138 @@ setHitCounter();
     var now = Date.now();
     if (t && now - last > 60) { spawn(t.clientX, t.clientY); last = now; }
   }, { passive: true });
+})();
+
+/* -------- the anthem jukebox: SMF parser + WebAudio sound-card cosplay --- */
+(function () {
+  function parseMidi(u8) {
+    var d = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+    var p = 0;
+    function u32() { var v = d.getUint32(p); p += 4; return v; }
+    function u16() { var v = d.getUint16(p); p += 2; return v; }
+    function b1()  { return d.getUint8(p++); }
+    function varlen() { var v = 0, b; do { b = b1(); v = (v << 7) | (b & 0x7f); } while (b & 0x80); return v; }
+    if (u32() !== 0x4d546864) throw new Error('not midi');
+    var hlen = u32(); u16(); var ntrk = u16(); var div = u16();
+    p = 8 + hlen;
+    if (div & 0x8000) throw new Error('smpte unsupported');
+    var ons = [], tempos = [{ tick: 0, us: 500000 }];
+    for (var t = 0; t < ntrk; t++) {
+      if (u32() !== 0x4d54726b) throw new Error('bad track');
+      var len = u32(), end = p + len, tick = 0, status = 0;
+      while (p < end) {
+        tick += varlen();
+        var b = b1();
+        if (b < 0x80) { p--; b = status; } else { status = b; }
+        var hi = b & 0xf0, ch = b & 0x0f;
+        if (hi === 0x90 || hi === 0x80) {
+          var note = b1(), vel = b1();
+          ons.push({ tick: tick, on: hi === 0x90 && vel > 0, note: note, vel: vel, ch: ch });
+        } else if (hi === 0xa0 || hi === 0xb0 || hi === 0xe0) { p += 2; }
+        else if (hi === 0xc0 || hi === 0xd0) { p += 1; }
+        else if (b === 0xff) {
+          var type = b1(), l = varlen();
+          if (type === 0x51 && l === 3) tempos.push({ tick: tick, us: (b1() << 16) | (b1() << 8) | b1() });
+          else p += l;
+        } else if (b === 0xf0 || b === 0xf7) { p += varlen(); }
+        else { throw new Error('bad event'); }
+      }
+      p = end;
+    }
+    tempos.sort(function (a, b) { return a.tick - b.tick; });
+    function toSec(tick) {
+      var sec = 0, last = tempos[0];
+      for (var i = 1; i < tempos.length && tempos[i].tick <= tick; i++) {
+        sec += (tempos[i].tick - last.tick) / div * last.us / 1e6;
+        last = tempos[i];
+      }
+      return sec + (tick - last.tick) / div * last.us / 1e6;
+    }
+    ons.sort(function (a, b) { return a.tick - b.tick; });
+    var open = {}, notes = [];
+    ons.forEach(function (e) {
+      var key = e.ch + ':' + e.note;
+      if (e.on) { (open[key] = open[key] || []).push(e); }
+      else if (open[key] && open[key].length) {
+        var s = open[key].shift();
+        var t0 = toSec(s.tick), t1 = toSec(e.tick);
+        if (t1 > t0) notes.push({ t: t0, dur: Math.min(t1 - t0, 6), note: s.note, vel: s.vel, ch: s.ch });
+      }
+    });
+    notes.sort(function (a, b) { return a.t - b.t; });
+    return notes;
+  }
+
+  var PLAYLIST = [
+    { file: 'midi/marcha_real.mid',  label: '🇪🇸 NOW PLAYING: Marcha Real — 8-bit royal fanfare' },
+    { file: 'midi/marseillaise.mid', label: '🇫🇷 NOW PLAYING: La Marseillaise — aux armes, citoyens (chiptune)' }
+  ];
+  var WAVES = ['square', 'triangle', 'sawtooth'];
+  var btn = document.getElementById('anthemBtn');
+  var np = document.getElementById('nowplaying');
+  var ctx = null, master = null, playing = false, timer = null, trackIdx = 0, cache = {};
+
+  function loadTrack(i, cb) {
+    if (cache[i]) return cb(cache[i]);
+    fetch(PLAYLIST[i].file).then(function (r) { return r.arrayBuffer(); }).then(function (ab) {
+      cache[i] = parseMidi(new Uint8Array(ab));
+      cb(cache[i]);
+    }).catch(function () { np.textContent = 'the MIDI failed to load — the band is walking here, please hold'; });
+  }
+
+  function playTrack(i) {
+    loadTrack(i, function (notes) {
+      if (!playing) return;
+      np.textContent = PLAYLIST[i].label;
+      var t0 = ctx.currentTime + 0.25, idx = 0;
+      var lastEnd = notes.length ? notes[notes.length - 1].t + notes[notes.length - 1].dur : 0;
+      clearInterval(timer);
+      timer = setInterval(function () {
+        if (!playing) return;
+        var horizon = ctx.currentTime - t0 + 1.2;
+        while (idx < notes.length && notes[idx].t < horizon) {
+          var n = notes[idx++];
+          if (n.ch === 9) continue; /* percussion: the drum machine stayed home */
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = WAVES[n.ch % WAVES.length];
+          osc.frequency.value = 440 * Math.pow(2, (n.note - 69) / 12);
+          var start = t0 + n.t, stop = start + n.dur;
+          var vol = (n.vel / 127) * 0.16;
+          g.gain.setValueAtTime(0.0001, start);
+          g.gain.linearRampToValueAtTime(vol, start + 0.008);
+          g.gain.setValueAtTime(vol, Math.max(start + 0.008, stop - 0.05));
+          g.gain.linearRampToValueAtTime(0.0001, stop);
+          osc.connect(g); g.connect(master);
+          osc.start(start); osc.stop(stop + 0.02);
+        }
+        if (idx >= notes.length && ctx.currentTime - t0 > lastEnd + 1.5) {
+          clearInterval(timer);
+          trackIdx = (i + 1) % PLAYLIST.length;
+          playTrack(trackIdx); /* et maintenant, l'autre hymne */
+        }
+      }, 200);
+    });
+  }
+
+  btn.addEventListener('click', function () {
+    if (!playing) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain();
+      master.gain.value = 0.9;
+      master.connect(ctx.destination);
+      ctx.resume();
+      playing = true;
+      btn.textContent = '⏸ SILENCE, PLEASE';
+      playTrack(trackIdx);
+    } else {
+      playing = false;
+      clearInterval(timer);
+      if (ctx) { ctx.close(); ctx = null; }
+      btn.textContent = '▶ STRIKE UP THE ANTHEMS';
+      np.textContent = 'himnos suspended — the orchestra is hydrating';
+    }
+  });
 })();
 
 /* ---------------------- EL BOTÓN: full Spanish translation on demand ----- */

@@ -217,12 +217,12 @@
     display: flex; gap: 12px; align-items: center; justify-content: center;
     flex-wrap: wrap;
   }
-  #anthemBtn {
+  #anthemBtn, #skipBtn {
     font-family: inherit; font-size: 14px; font-weight: bold;
     background: #222; color: #ffd900; border: 3px outset #888;
     padding: 6px 12px; cursor: pointer; white-space: nowrap;
   }
-  #anthemBtn:active { border-style: inset; }
+  #anthemBtn:active, #skipBtn:active { border-style: inset; }
   #nowplaying { letter-spacing: 1px; }
 
   /* the big floating translation button */
@@ -238,6 +238,20 @@
     animation: bob 2.6s ease-in-out infinite;
   }
   #langbtn:active { border-style: inset; }
+  #langbtn-fr {
+    position: fixed; right: 16px; bottom: 74px; z-index: 10000;
+    font-family: inherit; font-size: 16px; font-weight: bold;
+    padding: 12px 18px; cursor: pointer;
+    border: 5px outset #6f9fd8;
+    background: linear-gradient(#0055a4, #003a70);
+    color: #fff; text-shadow: 1px 1px 0 #000;
+    box-shadow: 0 6px 18px rgba(0,0,0,.55);
+    transform: rotate(2deg);
+    animation: bob 2.6s ease-in-out infinite reverse;
+    max-width: 62vw;
+  }
+  #langbtn { max-width: 62vw; }
+  #langbtn-fr:active { border-style: inset; }
   @keyframes bob {
     0%, 100% { transform: rotate(-2deg) translateY(0); }
     50% { transform: rotate(2deg) translateY(-7px); }
@@ -275,7 +289,8 @@
     </div>
     <div id="jukebox">
       <button id="anthemBtn" type="button">▶ STRIKE UP THE ANTHEMS</button>
-      <span id="nowplaying">MIDI jukebox armed · 2 himnos · alternating · authentic 1998 sound card</span>
+      <button id="skipBtn" type="button" title="skip to the other anthem">⏭ SKIP</button>
+      <span id="nowplaying">MIDI jukebox armed · 2 himnos · autoplays on your first touch · authentic 1998 sound card</span>
     </div>
   </div>
 
@@ -492,7 +507,7 @@
 <script>
 /* ---------------------------------------------- countdown to kickoff -- */
 (function () {
-  var kickoff = new Date('2026-07-14T14:00:00-07:00');
+  var kickoff = new Date('2026-07-14T14:00:00-05:00'); /* 2:00 PM Central (CDT), Casa Cathey time */
   var el = document.getElementById('countdown');
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function tick() {
@@ -613,8 +628,10 @@ setHitCounter();
   ];
   var WAVES = ['square', 'triangle', 'sawtooth'];
   var btn = document.getElementById('anthemBtn');
+  var skipBtn = document.getElementById('skipBtn');
   var np = document.getElementById('nowplaying');
-  var ctx = null, master = null, playing = false, timer = null, trackIdx = 0, cache = {};
+  var ctx = null, master = null, playing = false, timer = null, cache = {};
+  var trackIdx = Math.random() < 0.5 ? 0 : 1; /* coin toss decides who kicks off */
 
   function loadTrack(i, cb) {
     if (cache[i]) return cb(cache[i]);
@@ -624,15 +641,26 @@ setHitCounter();
     }).catch(function () { np.textContent = 'the MIDI failed to load — the band is walking here, please hold'; });
   }
 
+  /* a fresh AudioContext hard-cuts anything still ringing from the last track */
+  function freshCtx() {
+    if (ctx) { try { ctx.close(); } catch (e) {} }
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.9;
+    master.connect(ctx.destination);
+    ctx.resume();
+  }
+
   function playTrack(i) {
     loadTrack(i, function (notes) {
       if (!playing) return;
       np.textContent = PLAYLIST[i].label;
       var t0 = ctx.currentTime + 0.25, idx = 0;
+      var mine = ctx; /* if the context gets swapped by a skip, abandon this loop */
       var lastEnd = notes.length ? notes[notes.length - 1].t + notes[notes.length - 1].dur : 0;
       clearInterval(timer);
       timer = setInterval(function () {
-        if (!playing) return;
+        if (!playing || ctx !== mine) { clearInterval(timer); return; }
         var horizon = ctx.currentTime - t0 + 1.2;
         while (idx < notes.length && notes[idx].t < horizon) {
           var n = notes[idx++];
@@ -659,24 +687,39 @@ setHitCounter();
     });
   }
 
-  btn.addEventListener('click', function () {
-    if (!playing) {
-      ctx = new (window.AudioContext || window.webkitAudioContext)();
-      master = ctx.createGain();
-      master.gain.value = 0.9;
-      master.connect(ctx.destination);
-      ctx.resume();
-      playing = true;
-      btn.textContent = '⏸ SILENCE, PLEASE';
-      playTrack(trackIdx);
-    } else {
-      playing = false;
-      clearInterval(timer);
-      if (ctx) { ctx.close(); ctx = null; }
-      btn.textContent = '▶ STRIKE UP THE ANTHEMS';
-      np.textContent = 'himnos suspended — the orchestra is hydrating';
-    }
+  function start() {
+    freshCtx();
+    playing = true;
+    btn.textContent = '⏸ SILENCE, PLEASE';
+    playTrack(trackIdx);
+  }
+  function stop() {
+    playing = false;
+    clearInterval(timer);
+    if (ctx) { try { ctx.close(); } catch (e) {} ctx = null; }
+    btn.textContent = '▶ STRIKE UP THE ANTHEMS';
+    np.textContent = 'himnos suspended — the orchestra is hydrating';
+  }
+
+  btn.addEventListener('click', function () { disarm(); playing ? stop() : start(); });
+  skipBtn.addEventListener('click', function () {
+    disarm();
+    trackIdx = (trackIdx + 1) % PLAYLIST.length;
+    if (playing) { clearInterval(timer); freshCtx(); playTrack(trackIdx); } /* hard-cut to the other hymne */
+    else start();
   });
+
+  /* autoplay: browsers forbid sound before a gesture, so we pounce on the first one */
+  var GESTURES = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'mousemove'];
+  function armFn(e) {
+    if (e && (e.target === btn || e.target === skipBtn)) return; /* let the buttons speak for themselves */
+    disarm();
+    if (!playing) start();
+  }
+  function disarm() {
+    GESTURES.forEach(function (g) { removeEventListener(g, armFn, true); });
+  }
+  GESTURES.forEach(function (g) { addEventListener(g, armFn, true); });
 })();
 
 /* ---------------------- EL BOTÓN: full Spanish translation on demand ----- */
@@ -727,27 +770,85 @@ setHitCounter();
     'visitor': 'Usted es el visitante № <span class="counter" id="hitcounter">0000000</span> de esta página.<br><span class="footnote">contador certificado por los mismos colegiados que revisan el fuera de juego</span>',
     'colophon': 'Se ve mejor en Netscape Navigator 4.0 a 800×600 a través de una cortina de cuentas.<br>Música de fondo (<i>Boléro.mid</i>, 4,2&nbsp;MB) retirada por consejo de la asesoría jurídica.<br>En este sitio no hay cookies salvo, potencialmente, las físicas.<br><a href="/">⟵ volver al portafolio regularmente programado de Paul Cathey</a>'
   };
+  var FR = {
+    'mq': '⚽ ATTENTION MESDAMES, MESSIEURS, ET TOUT LE MONDE ⚽ DEMAIN ⚽ 14H00 ⚽ ESPAGNE v FRANCE ⚽ LA VRAIE FINALE, HABILEMENT DÉGUISÉE EN DEMI-FINALE ⚽ CASA CATHEY ⚽ APPORTEZ VOTRE ORDINATEUR ⚽ LE CAFÉ HORCHATA COULE COMME LA SEINE ⚽ SERVIETTES RAFRAÎCHISSANTES FOURNIES ⚽ CLIM DE FENÊTRE : EN NÉGOCIATIONS AVANCÉES DE TRANSFERT ⚽ VOTRE POINT SLACK RESTE VERT — NOUS AVONS LA TECHNOLOGIE ⚽ DISPENSES OFFICIELLES DÉLIVRÉES SUR PLACE ⚽ RÉPONDEZ OU SOYEZ HANTÉ À JAMAIS PAR CE QUE VOUS AVEZ MANQUÉ ⚽',
+    'subtitle': 'une invitation solennelle &nbsp;·&nbsp; un rendez-vous ibérique &nbsp;·&nbsp; une demi-finale plus finale que la finale',
+    'hotline': '☀️ OUI, il fera chaud. NON, rien ne nous arrêtera. ☀️',
+    'intro': 'Amis, Romains, télétravailleurs : l’histoire frappe rarement deux fois, et demain elle donne le coup d’envoi à quatorze heures. L’<span class="spain">Espagne</span> et la <span class="france">France</span> — les deux meilleures nations du football actuellement en vie — se rencontrent dans une prétendue <i>demi-finale</i>, ce qui revient à appeler le soleil une <i>lampe de taille moyenne</i>. Ce qui se passera lors de la vraie finale ne sera qu’un épilogue. <b>CECI</b> est le match. Et cela tombe, fort à propos, le <b>14 juillet</b>, car la France n’a jamais su résister à l’envie d’être dramatique un jour de Fête nationale.',
+    'cap-duel': 'Les protagonistes, lors de leur précédente rencontre (Euro 2024). Demain, la dispute reprend.',
+    'cap-map': 'Le théâtre des opérations. Deux nations fières, une seule chaîne de montagnes partagée, aucun accord sur l’heure du dîner.',
+    'cap-lunch': 'Les enjeux, illustrés. Les deux civilisations ont atteint leur sommet à l’heure du déjeuner ; demain, on décide laquelle.',
+    'h-part': '📜 LES DÉTAILS 📜',
+    'details': '<tbody><tr><th>QUOI</th><td>L’<span class="spain">Espagne</span> vs la <span class="france">France</span> — demi-finale de Coupe du monde, autrement dit <i>la finale, arrivée en avance pour éviter les bouchons</i>.</td></tr><tr><th>QUAND</th><td><b>DEMAIN — mardi 14 juillet — 14h00</b> (murmures d’avant-match et attribution des boissons dès 13h30).</td></tr><tr><th>OÙ</th><td><b>Casa Cathey.</b> Vous savez laquelle. Le canapé se souvient de vous. Si vous ignorez vraiment où j’habite, répondez à l’invitation et avouez-le.</td></tr><tr><th>APPORTEZ</th><td><b>Votre ordinateur.</b> C’est un mardi. Il est 14h. Ne posez plus de questions et on ne vous en posera aucune. Votre point Slack brillera d’un vert serein et plausible pendant que votre âme sera à Dallas. Wi-Fi fourni. Alibis fournis. Excel peut rester ouvert dans une petite fenêtre. Cela ne regarde que vous et vos dieux.</td></tr><tr><th>TENUE</th><td>Rouge, jaune, bleu, blanc — ou en pyjama, on n’est pas l’ONU.</td></tr></tbody>',
+    'cd-note': 'jours : heures : minutes : secondes avant que la Terre ne cesse brièvement de tourner',
+    'h-climate': '❄️ SITUATION CLIMATIQUE : DÉCLARATION COMPLÈTE ET HONNÊTE ❄️',
+    'clim-intro': 'Il n’y a pas de climatisation centrale. Il n’y en a jamais eu. La climatisation centrale est, comme la vraie finale de Coupe du monde, une belle idée qui vit ailleurs. <b>CEPENDANT,</b> votre délégation de confort comprend :',
+    'am-fans': '🌀 <b>Une phalange de ventilateurs oscillants</b>, disposés en 4-4-2, chacun personnellement motivé.',
+    'am-coffee': '🧊 <b>Café horchata glacé</b>, froid comme un contre français, sucré comme un petit pont de Yamal. Sans fond, ou presque.',
+    'am-towels': '🧣 <b>Serviettes rafraîchissantes</b>, glacées et distribuées à la mi-temps comme un remplacement que l’on peut porter.',
+    'am-window': '🪟 <b>Une clim de fenêtre</b> est en <i>négociations avancées de transfert</i>. Termes personnels convenus ; visite médicale prévue au matin. On nous dit qu’elle « veut venir ». Annonce imminente. <span class="blink">HERE WE GO ?</span>',
+    'h-past': '⚖️ LETTRE PASTORALE AUX RESPONSABLES ⚖️',
+    'past-intro': 'Nous savons qui vous êtes. Vous êtes <i>« débordé »</i>. Vous avez <i>« un livrable »</i>. Vous comptiez <i>« regarder le résumé plus tard »</i>. Cette section a été écrite pour vous, avec tendresse, par le Sous-comité pour Saisir le Jour.',
+    'faq': '<p><b>« J’ai des réunions. »</b><br>Le canapé accepte la visioconférence. Le mur du fond est beige et ne raconte rien. Vous serez en sourdine, hydraté et moralement soutenu. Si vous devez dire « on en reparle », dites-le pendant une touche.</p><p><b>« Je suis débordé. »</b><br>Le travail sera toujours là à 17h. Lamine Yamal aura dix-neuf ans pendant exactement un an, et l’Espagne affronte la France en phase à élimination directe environ une fois par pontificat.</p><p><b>« Je regarderai la rediffusion ce soir. »</b><br>Personne dans l’histoire documentée n’a jamais regardé la rediffusion. Vous connaîtrez le score à 16h15, que vous le vouliez ou non — les notifications nous traquent tous. Le direct, c’est l’histoire. La rediffusion, ce sont les devoirs.</p><p><b>« Est-ce irresponsable ? »</b><br>Camus était gardien. Unamuno montait la garde. Vous garderez votre ordinateur ouvert. Ici, tout le monde est, aux yeux de la loi et de l’annuaire LDAP, <i>au travail</i>.</p><p><b>« Et si on me demande ce que j’ai fait mardi après-midi ? »</b><br>« Séminaire interfonctionnel. Forte participation. Plusieurs points d’action criés à une télévision. »</p>',
+    'mathbox': '<b>L’ARITHMÉTIQUE, POUR L’ESPRIT RATIONNEL 🧮</b><br>90 minutes + arrêts de jeu + prolongation + tirs au but <i>(si Dieu le veut)</i> ≈ <b>0,03 % de votre année</b>.<br>Le regret de l’avoir manqué : <b>intérêts composés trimestriels, à jamais.</b><br><span class="footnote">Ceci n’est pas un conseil financier. C’est mieux qu’un conseil financier.</span>',
+    'dotline': '<span class="dot"></span> VOTRE POINT : VERT &nbsp;·&nbsp; <span class="dot"></span> VOTRE CŒUR : COMBLE &nbsp;·&nbsp; <span class="dot"></span> VOTRE ALIBI : BLINDÉ',
+    'coupon': '<div class="footnote">✂ — — — — — — — — — découpez ici et ne le présentez à absolument personne — — — — — — — — — ✂</div><h3 style="margin:10px 0 6px">DISPENSE OFFICIELLE № 1789</h3><p style="margin:6px 0">Le porteur, <span class="blankline">&nbsp;</span>, est par la présente dispensé de toute <b>ambition visible</b> entre 13h30 et le coup de sifflet final (prolongation et tirs au but compris, <i>si Dieu le veut</i>), pour raisons de <b>nécessité historique</b>.</p><p style="margin:6px 0">Cette indulgence n’est reconnue par aucune institution et honorée par toutes les personnes de bon sens.</p><p style="margin:10px 0 4px; font-family: Georgia, serif; font-style: italic;">— Le Sous-comité pour Saisir le Jour (fondé lui aussi en 1789)</p>',
+    'h-tape': '⚔️ LE FACE-À-FACE ⚔️',
+    'f-esp': '<h3><span class="spain">LAMINE YAMAL</span> 🇪🇸</h3>A eu <b>19 ans HIER</b>, et compte le fêter en poussant des défenseurs chevronnés à reconsidérer leur carrière. A vécu moins de Coupes du monde que certaines de mes plantes. Joue comme Lorca écrivait — du pied gauche, au crépuscule, injustement.',
+    'f-fra': '<h3><span class="france">KYLIAN MBAPPÉ</span> 🇫🇷</h3>Court plus vite qu’une rumeur. Le 14 juillet, en match couperet, un Français avec un canon en guise de jambe — ce n’est pas du sport, c’est du <i>théâtre national</i>. Apportez un drapeau de hors-jeu et un poème ; il vous faudra les deux et aucun ne servira.',
+    'tape-note': 'L’un de ces hommes nous brisera le cœur. L’autre aussi, autrement. Présence obligatoire pour une juste répartition du chagrin.',
+    'camus-x': '(Ceci était déjà en français. Respirez tranquillement.)',
+    'camus-c': '— Albert Camus, gardien de but d’abord, prix Nobel en solution de repli',
+    'camus-h': '(passez le curseur sur la citation — elle est déjà en français, mais le geste est apprécié)',
+    'day115-cap': '<b>La tradition perdure.</b> Jour 115 de jonglage en récitant <i>L’Étranger</i>. Camus aurait compris. Camus aurait compté les touches.',
+    'lorca-x': 'À deux heures de l’après-midi.<br>Il était deux heures pile de l’après-midi.<br>Un canapé était déjà disposé,<br>à deux heures de l’après-midi.<br>Le reste n’était que chaleur et rien que chaleur,<br>à deux heures de l’après-midi.',
+    'lorca-c': '— d’après Federico García Lorca, <i>Llanto</i>, aimablement reprogrammé de cinq heures de l’après-midi et déplacé à l’intérieur, avec toutes nos excuses à l’Andalousie',
+    'lorca-h': '(posez le curseur sur le poème pour le français — comme un arbitre dubitatif se penche sur l’écran)',
+    'una-t': 'Unamuno a écrit sur <i>le sentiment tragique de la vie</i> — cette douleur de vouloir quelque chose d’éternel tout en sachant que rien ne l’est. Il décrivait, avec une précision troublante, le fait de soutenir une sélection nationale en phase couperet. Venez vous sentir infini pendant quatre-vingt-dix minutes plus les arrêts de jeu.',
+    'una-c': '— Miguel de Unamuno, paraphrasé bien au-delà de ce qu’il aurait toléré',
+    'h-evid': '📸 PREUVES DU LIEU 📸',
+    'evid-note': '(toutes les pièces authentifiées par le Sous-comité ; sans retouche, sans VAR)',
+    'polaroids': '<div class="polaroid"><div class="frame"><img src="pics/host.jpg" alt="vieille photo d’enfants à l’entraînement de football sur un terrain urbain" style="object-position:50% 35%"></div><b>Pièce A — Votre hôte</b>, en plein tourment, lors d’un cycle mondial précédent. Des recruteurs étaient présents. Ils n’ont pas rappelé.</div><div class="polaroid"><div class="frame"><img src="pics/dog.jpg" alt="un chien noir allongé dignement dans un carton" style="object-position:50% 30%"></div><b>Pièce B — Le chien</b>, mascotte officielle, partie neutre, photographié dans sa loge en carton. Loge : places très limitées.</div><div class="polaroid"><div class="frame"><img src="pics/tv.jpg" alt="un téléviseur sur une cheminée blanche encadré d’étagères"></div><b>Pièce C — Le téléviseur</b>, à la hauteur de l’événement, flanqué des trophées des campagnes passées.</div><div class="polaroid"><div class="frame"><img src="pics/couch.jpg" alt="un canapé moelleux et profond avec de nombreux coussins"></div><b>Pièce D — Le canapé</b>, invaincu à domicile. Assoit une nation. Présenté avec le matériel d’entraînement officiel.</div>',
+    'window-note': 'Les observateurs attentifs de la Pièce C repéreront une <b>clim de fenêtre</b> tout à gauche. La visite médicale, semble-t-il, s’est bien passée. <span class="blink">HERE WE GO.</span>',
+    'rsvp-line': 'Les deux boutons signifient oui. Il n’y a pas de bouton pour non. C’est voulu.',
+    'rsvp-note': 'ou écrivez-moi comme une personne normale, ce qu’aucun de nous n’est',
+    'webring': '🔗 Membre fier du <b>WEBRING IBERIA–GALLIA</b> 🔗<br>[ <a href="https://fr.wikipedia.org/wiki/%C3%89quipe_d%27Espagne_de_football">« préc</a> ] [ <a href="https://fr.wikipedia.org/wiki/Pyr%C3%A9n%C3%A9es">au hasard</a> ] [ <a href="https://fr.wikipedia.org/wiki/%C3%89quipe_de_France_de_football">suiv »</a> ]',
+    'visitor': 'Vous êtes le visiteur № <span class="counter" id="hitcounter">0000000</span> de cette page.<br><span class="footnote">compteur certifié exact par les mêmes arbitres qui vérifient le hors-jeu</span>',
+    'colophon': 'Vu de préférence dans Netscape Navigator 4.0 en 800×600 à travers un rideau de perles.<br>Musique de fond (<i>Boléro.mid</i>, 4,2&nbsp;Mo) retirée sur les conseils de l’avocat.<br>Aucun cookie sur ce site, sauf, éventuellement, les vrais (physiques).<br><a href="/">⟵ retour au portfolio régulièrement programmé de Paul Cathey</a>'
+  };
+
+  var DICTS = { es: ES, fr: FR };
   var EN = {};
   var mode = 'en';
   try { mode = localStorage.getItem('cdg-lang') || 'en'; } catch (e) {}
-  var btn = document.createElement('button');
-  btn.id = 'langbtn';
-  btn.type = 'button';
-  document.body.appendChild(btn);
+  if (mode !== 'es' && mode !== 'fr') mode = 'en';
+
+  function makeBtn(id) {
+    var b = document.createElement('button');
+    b.id = id; b.type = 'button';
+    document.body.appendChild(b);
+    return b;
+  }
+  var esBtn = makeBtn('langbtn');
+  var frBtn = makeBtn('langbtn-fr');
+
   function apply(m) {
-    for (var id in ES) {
+    var dict = DICTS[m];
+    for (var id in ES) { /* ES and FR share the same key set */
       var el = document.getElementById(id);
       if (!el) continue;
       if (!(id in EN)) EN[id] = el.innerHTML;
-      el.innerHTML = (m === 'es') ? ES[id] : EN[id];
+      el.innerHTML = (dict && dict[id] != null) ? dict[id] : EN[id];
     }
-    document.documentElement.lang = (m === 'es') ? 'es' : 'en';
-    btn.textContent = (m === 'es') ? '🇬🇧 BACK TO ENGLISH' : '🇪🇸 ¡EN ESPAÑOL, POR FAVOR!';
+    document.documentElement.lang = (m === 'es') ? 'es' : (m === 'fr') ? 'fr' : 'en';
+    esBtn.textContent = (m === 'es') ? '🇬🇧 BACK TO ENGLISH' : '🇪🇸 ¡EN ESPAÑOL, POR FAVOR!';
+    frBtn.textContent = (m === 'fr') ? '🇬🇧 BACK TO ENGLISH' : '🇫🇷 EN FRANÇAIS, S’IL VOUS PLAÎT';
     setHitCounter();
     mode = m;
     try { localStorage.setItem('cdg-lang', m); } catch (e) {}
   }
-  btn.addEventListener('click', function () { apply(mode === 'es' ? 'en' : 'es'); });
+  esBtn.addEventListener('click', function () { apply(mode === 'es' ? 'en' : 'es'); });
+  frBtn.addEventListener('click', function () { apply(mode === 'fr' ? 'en' : 'fr'); });
   apply(mode);
 })();
 

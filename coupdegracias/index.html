@@ -201,6 +201,40 @@
   img.pixel { image-rendering: pixelated; max-width: 100%; height: auto; }
   .gifrow { text-align: center; }
 
+  /* the MIDI jukebox */
+  #jukebox {
+    background: #000; border: 4px inset #555; color: #39ff14;
+    font-family: "Courier New", monospace; font-size: 14px;
+    padding: 8px 14px; margin: 14px auto 2px; max-width: 640px;
+    display: flex; gap: 12px; align-items: center; justify-content: center;
+    flex-wrap: wrap;
+  }
+  #anthemBtn {
+    font-family: inherit; font-size: 14px; font-weight: bold;
+    background: #222; color: #ffd900; border: 3px outset #888;
+    padding: 6px 12px; cursor: pointer; white-space: nowrap;
+  }
+  #anthemBtn:active { border-style: inset; }
+  #nowplaying { letter-spacing: 1px; }
+
+  /* the big floating translation button */
+  #langbtn {
+    position: fixed; right: 16px; bottom: 16px; z-index: 10000;
+    font-family: inherit; font-size: 17px; font-weight: bold;
+    padding: 13px 20px; cursor: pointer;
+    border: 5px outset #ffd900;
+    background: linear-gradient(#c81624, #7d0e17);
+    color: #ffd900; text-shadow: 1px 1px 0 #000;
+    box-shadow: 0 6px 18px rgba(0,0,0,.55);
+    transform: rotate(-2deg);
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  #langbtn:active { border-style: inset; }
+  @keyframes bob {
+    0%, 100% { transform: rotate(-2deg) translateY(0); }
+    50% { transform: rotate(2deg) translateY(-7px); }
+  }
+
   /* sparkles */
   .sparkle {
     position: fixed; pointer-events: none; z-index: 9999;
@@ -219,25 +253,29 @@
 </head>
 <body>
 
-<marquee scrollamount="7">⚽ ATTENTION MESDAMES, MESSIEURS, Y TODO EL MUNDO ⚽ TOMORROW ⚽ 2:00 PM ⚽ ESPAÑA v FRANCE ⚽ THE TRUE FINAL, CLEVERLY DISGUISED AS A SEMIFINAL ⚽ CASA CATHEY ⚽ BYO LAPTOP ⚽ HORCHATA COFFEE FLOWS LIKE THE SEINE ⚽ COOLING TOWELS PROVIDED ⚽ WINDOW UNIT: IN ADVANCED TRANSFER NEGOTIATIONS ⚽ YOUR SLACK DOT STAYS GREEN — WE HAVE THE TECHNOLOGY ⚽ OFFICIAL DISPENSATIONS ISSUED ON-SITE ⚽ RSVP OR BE FOREVER HAUNTED BY WHAT YOU MISSED ⚽</marquee>
+<marquee id="mq" scrollamount="7">⚽ ATTENTION MESDAMES, MESSIEURS, Y TODO EL MUNDO ⚽ TOMORROW ⚽ 2:00 PM ⚽ ESPAÑA v FRANCE ⚽ THE TRUE FINAL, CLEVERLY DISGUISED AS A SEMIFINAL ⚽ CASA CATHEY ⚽ BYO LAPTOP ⚽ HORCHATA COFFEE FLOWS LIKE THE SEINE ⚽ COOLING TOWELS PROVIDED ⚽ WINDOW UNIT: IN ADVANCED TRANSFER NEGOTIATIONS ⚽ YOUR SLACK DOT STAYS GREEN — WE HAVE THE TECHNOLOGY ⚽ OFFICIAL DISPENSATIONS ISSUED ON-SITE ⚽ RSVP OR BE FOREVER HAUNTED BY WHAT YOU MISSED ⚽</marquee>
 
 <div id="page">
 
   <div class="center" style="margin-top:16px">
     <img class="pixel" src="gifs/new.gif" alt="NEW!" width="66" height="66">
     <h1 class="wordart">COUP DE GRÂCIAS</h1>
-    <div class="subtitle">une invitación solennelle &nbsp;·&nbsp; un rendez-vous ibérico &nbsp;·&nbsp; a semifinal más final than the final</div>
+    <div class="subtitle" id="subtitle">une invitación solennelle &nbsp;·&nbsp; un rendez-vous ibérico &nbsp;·&nbsp; a semifinal más final than the final</div>
     <div class="flag-bar" aria-hidden="true">
       <div style="background:#a1131f"></div><div style="background:#ffd900"></div><div style="background:#a1131f"></div>
       <div style="background:#0055a4"></div><div style="background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd"></div><div style="background:#ef4135"></div>
     </div>
+    <div id="jukebox">
+      <button id="anthemBtn" type="button">▶ STRIKE UP THE ANTHEMS</button>
+      <span id="nowplaying">MIDI jukebox armed · 2 himnos · alternating · authentic 1998 sound card</span>
+    </div>
   </div>
 
   <p class="center" style="font-size:18px">
-    <span class="blink">☀️ YES it will be hot. NO we will not be stopped. ☀️</span>
+    <span class="blink" id="hotline">☀️ YES it will be hot. NO we will not be stopped. ☀️</span>
   </p>
 
-  <p style="font-size:18px; line-height:1.55">
+  <p style="font-size:18px; line-height:1.55" id="intro">
     Friends, Romans, remote workers: history rarely knocks twice, and tomorrow it kicks off at two.
     <span class="spain">Spain</span> and <span class="france">France</span> — the two best footballing nations
     currently drawing breath — meet in a so-called <i>semifinal</i>, which is like calling the sun a
@@ -248,8 +286,8 @@
 
   <div class="gifrow"><img class="pixel" src="gifs/flames.gif" alt="a strip of dancing pixel flames" width="640" height="88"></div>
 
-  <h2>📜 THE PARTICULARS 📜</h2>
-  <table class="details">
+  <h2 id="h-part">📜 THE PARTICULARS 📜</h2>
+  <table class="details" id="details">
     <tr><th>QUOI</th><td><span class="spain">España</span> vs <span class="france">France</span> — World Cup semifinal, a.k.a. <i>the final, arriving early to beat traffic</i>.</td></tr>
     <tr><th>QUAND</th><td><b>TOMORROW — Tuesday, July 14th — 2:00 PM</b> (pregame murmuring and beverage assignment from 1:30).</td></tr>
     <tr><th>DÓNDE</th><td><b>Casa Cathey.</b> You know the one. The couch remembers you. If you genuinely don't know where I live, reply to the invite and confess.</td></tr>
@@ -259,29 +297,29 @@
 
   <p class="center" style="margin-top:22px">
     <span id="countdown" aria-live="off">--:--:--:--</span><br>
-    <span class="footnote">days : hours : minutes : seconds until the earth briefly stops rotating</span>
+    <span class="footnote" id="cd-note">days : hours : minutes : seconds until the earth briefly stops rotating</span>
   </p>
 
   <hr class="fancy">
 
-  <h2>❄️ CLIMATE SITUATION: A FULL &amp; HONEST DISCLOSURE ❄️</h2>
+  <h2 id="h-climate">❄️ CLIMATE SITUATION: A FULL &amp; HONEST DISCLOSURE ❄️</h2>
   <div class="gifrow"><img class="pixel" src="gifs/construction.gif" alt="yellow and black striped banner reading CLIMATE UNDER CONSTRUCTION" width="528" height="84"></div>
-  <p class="amenity">There is no central air. There was never central air. Central air is, like the true World Cup final, a beautiful idea that lives elsewhere. <b>HOWEVER,</b> your comfort delegation includes:</p>
-  <div class="amenity">🌀 <b>A phalanx of oscillating fans</b>, arranged in a 4-4-2, each one personally motivated.</div>
-  <div class="amenity">🧊 <b>Iced horchata coffee</b>, cold as a French counterattack, sweet as a Yamal nutmeg. Bottomless-ish.</div>
-  <div class="amenity">🧣 <b>Cooling towels</b>, chilled and distributed at halftime like a substitution you can wear.</div>
-  <div class="amenity">🪟 <b>A window unit</b> is in <i>advanced transfer negotiations</i>. Personal terms agreed; medical scheduled for the morning. We are told it "wants the move." Announcement pending. <span class="blink">HERE WE GO?</span></div>
+  <p class="amenity" id="clim-intro">There is no central air. There was never central air. Central air is, like the true World Cup final, a beautiful idea that lives elsewhere. <b>HOWEVER,</b> your comfort delegation includes:</p>
+  <div class="amenity" id="am-fans">🌀 <b>A phalanx of oscillating fans</b>, arranged in a 4-4-2, each one personally motivated.</div>
+  <div class="amenity" id="am-coffee">🧊 <b>Iced horchata coffee</b>, cold as a French counterattack, sweet as a Yamal nutmeg. Bottomless-ish.</div>
+  <div class="amenity" id="am-towels">🧣 <b>Cooling towels</b>, chilled and distributed at halftime like a substitution you can wear.</div>
+  <div class="amenity" id="am-window">🪟 <b>A window unit</b> is in <i>advanced transfer negotiations</i>. Personal terms agreed; medical scheduled for the morning. We are told it "wants the move." Announcement pending. <span class="blink">HERE WE GO?</span></div>
 
   <hr class="fancy">
 
-  <h2>⚖️ A PASTORAL LETTER TO THE RESPONSIBLE ⚖️</h2>
-  <p style="font-size:17px">
+  <h2 id="h-past">⚖️ A PASTORAL LETTER TO THE RESPONSIBLE ⚖️</h2>
+  <p style="font-size:17px" id="past-intro">
     We know who you are. You are <i>"slammed."</i> You have <i>"a deliverable."</i>
     You were planning to <i>"catch the highlights."</i> This section was written for you,
     with love, by the Subcommittee on Seizing the Day.
   </p>
 
-  <div class="faq">
+  <div class="faq" id="faq">
     <p><b>"I have meetings."</b><br>
     The couch supports video. The wall behind it is beige and tells no tales. You will be muted, hydrated, and morally supported. If you must say "circle back," say it during a throw-in.</p>
 
@@ -298,18 +336,18 @@
     "Cross-functional offsite. High engagement. Several action items were shouted at a television."</p>
   </div>
 
-  <div class="mathbox">
+  <div class="mathbox" id="mathbox">
     <b>THE ARITHMETIC, FOR THE RATIONAL MIND 🧮</b><br>
     90 minutes + stoppage + extra time + penalties <i>(God willing)</i> ≈ <b>0.03% of your year</b>.<br>
     The regret of missing it: <b>compounds quarterly, forever.</b><br>
     <span class="footnote">This is not financial advice. It is better than financial advice.</span>
   </div>
 
-  <p class="center" style="font-size:17px">
+  <p class="center" style="font-size:17px" id="dotline">
     <span class="dot"></span> YOUR DOT: GREEN &nbsp;·&nbsp; <span class="dot"></span> YOUR HEART: FULL &nbsp;·&nbsp; <span class="dot"></span> YOUR ALIBI: AIRTIGHT
   </p>
 
-  <div class="coupon">
+  <div class="coupon" id="coupon">
     <div class="footnote">✂ — — — — — — — — — cut here and present to absolutely no one — — — — — — — — — ✂</div>
     <h3 style="margin:10px 0 6px">OFFICIAL DISPENSATION № 1789</h3>
     <p style="margin:6px 0">
@@ -327,18 +365,18 @@
 
   <hr class="fancy">
 
-  <h2>⚔️ THE TALE OF THE TAPE ⚔️</h2>
+  <h2 id="h-tape">⚔️ THE TALE OF THE TAPE ⚔️</h2>
   <div class="tape">
-    <div class="fighter esp">
+    <div class="fighter esp" id="f-esp">
       <h3><span class="spain">LAMINE YAMAL</span> 🇪🇸</h3>
       Turned <b>19 years old YESTERDAY</b>, and intends to celebrate by making grown defenders reconsider their careers. Has been alive for fewer World Cups than some of my houseplants. Plays the sport the way Lorca wrote — left-footed, at dusk, unfairly.
     </div>
-    <div class="fighter fra">
+    <div class="fighter fra" id="f-fra">
       <h3><span class="france">KYLIAN MBAPPÉ</span> 🇫🇷</h3>
       Runs faster than gossip. On Bastille Day, in a knockout match, a Frenchman with a cannon for a leg — this is not sport, this is <i>national theatre</i>. Bring an offside flag and a poem; you will need both and neither will help.
     </div>
   </div>
-  <p class="center footnote">One of these men will break our hearts. The other will also break our hearts, differently. Attendance mandatory for proper heartbreak distribution.</p>
+  <p class="center footnote" id="tape-note">One of these men will break our hearts. The other will also break our hearts, differently. Attendance mandatory for proper heartbreak distribution.</p>
 
   <div class="gifrow"><img class="pixel" src="gifs/ball.gif" alt="spinning pixel soccer ball" width="120" height="120"></div>
 
@@ -349,15 +387,15 @@
   <blockquote class="poem" tabindex="0">
     <img class="bard" src="pics/camus.jpg" alt="Albert Camus in a suit, holding a soccer ball, against a green pitch background" title="Albert Camus, warming up">
     «Tout ce que je sais de plus sûr à propos de la moralité et des obligations des hommes, c'est au football que je le dois.»
-    <span class="xlate">"All that I know most surely about morality and the obligations of men, I owe to football."</span>
-    <cite>— Albert Camus, goalkeeper first, Nobel laureate as a fallback plan</cite>
-    <span class="footnote xlate-hint">(hover for the English — the meaning, like a well-struck ball, arrives a beat after the touch)</span>
+    <span class="xlate" id="camus-x">"All that I know most surely about morality and the obligations of men, I owe to football."</span>
+    <cite id="camus-c">— Albert Camus, goalkeeper first, Nobel laureate as a fallback plan</cite>
+    <span class="footnote xlate-hint" id="camus-h">(hover for the English — the meaning, like a well-struck ball, arrives a beat after the touch)</span>
   </blockquote>
 
   <div class="center" style="margin:22px 0">
     <div class="polaroid tall" style="display:inline-block">
       <div class="frame"><img src="pics/day115.jpg" alt="a person juggling a soccer ball in a driveway, captioned: day 115 teaching myself how to juggle a soccer ball while reciting The Stranger by Albert Camus"></div>
-      <b>The tradition endures.</b> Day 115 of juggling while reciting <i>The Stranger</i>. Camus would have understood. Camus would have counted the touches.
+      <span id="day115-cap"><b>The tradition endures.</b> Day 115 of juggling while reciting <i>The Stranger</i>. Camus would have understood. Camus would have counted the touches.</span>
     </div>
   </div>
 
@@ -369,57 +407,57 @@
     a las dos de la tarde.<br>
     Lo demás era calor y solamente calor,<br>
     a las dos de la tarde.</i>
-    <span class="xlate">At two in the afternoon.<br>
+    <span class="xlate" id="lorca-x">At two in the afternoon.<br>
     It was two o'clock sharp in the afternoon.<br>
     A couch was already laid out,<br>
     at two in the afternoon.<br>
     The rest was heat and only heat,<br>
     at two in the afternoon.</span>
-    <cite>— after Federico García Lorca, <i>Llanto</i>, lightly rescheduled from five o'clock and moved indoors, with apologies to Andalusia</cite>
-    <span class="footnote xlate-hint">(rest your cursor upon the poem for the English — hover, the way a doubtful referee hovers over the monitor)</span>
+    <cite id="lorca-c">— after Federico García Lorca, <i>Llanto</i>, lightly rescheduled from five o'clock and moved indoors, with apologies to Andalusia</cite>
+    <span class="footnote xlate-hint" id="lorca-h">(rest your cursor upon the poem for the English — hover, the way a doubtful referee hovers over the monitor)</span>
   </blockquote>
 
   <blockquote class="poem">
     <img class="bard" src="pics/unamuno.jpg" alt="Miguel de Unamuno, white-bearded, in round spectacles" title="Miguel de Unamuno, unimpressed but present">
-    Unamuno wrote of <i>the tragic sense of life</i> — the ache of wanting something eternal while knowing nothing is. He was describing, with eerie precision, supporting a national team in a knockout round. Come feel infinite for ninety minutes plus stoppage.
-    <cite>— Miguel de Unamuno, paraphrased beyond what he'd tolerate</cite>
+    <span id="una-t">Unamuno wrote of <i>the tragic sense of life</i> — the ache of wanting something eternal while knowing nothing is. He was describing, with eerie precision, supporting a national team in a knockout round. Come feel infinite for ninety minutes plus stoppage.</span>
+    <cite id="una-c">— Miguel de Unamuno, paraphrased beyond what he'd tolerate</cite>
   </blockquote>
 
   <hr class="fancy">
 
-  <h2>📸 EVIDENCE OF VENUE 📸</h2>
-  <p class="center footnote">(all exhibits authenticated by the Subcommittee; no touch-ups, no VAR)</p>
-  <div class="polaroids">
+  <h2 id="h-evid">📸 EVIDENCE OF VENUE 📸</h2>
+  <p class="center footnote" id="evid-note">(all exhibits authenticated by the Subcommittee; no touch-ups, no VAR)</p>
+  <div class="polaroids" id="polaroids">
     <div class="polaroid"><div class="frame"><img src="pics/host.jpg" alt="a vintage photo of kids at soccer practice on a city field" style="object-position:50% 35%"></div><b>Exhibit A — Your host</b>, mid-anguish, during an earlier World Cup cycle. Scouts were present. Calls were not returned.</div>
     <div class="polaroid"><div class="frame"><img src="pics/dog.jpg" alt="a black dog lying regally inside a cardboard box" style="object-position:50% 30%"></div><b>Exhibit B — The dog</b>, official mascot, neutral party, pictured in the box seats. Box seating: extremely limited.</div>
     <div class="polaroid"><div class="frame"><img src="pics/tv.jpg" alt="a television on a white fireplace mantel flanked by bookshelves"></div><b>Exhibit C — The television</b>, large enough for the occasion, flanked by the trophies of previous campaigns.</div>
     <div class="polaroid"><div class="frame"><img src="pics/couch.jpg" alt="a deep plush couch with many pillows"></div><b>Exhibit D — The couch</b>, undefeated at home. Seats a nation. Shown with official training equipment.</div>
   </div>
-  <p class="center footnote">Sharp-eyed viewers of Exhibit C may spot a <b>window unit</b> at far left. The medical, it seems, went well. <span class="blink">HERE WE GO.</span></p>
+  <p class="center footnote" id="window-note">Sharp-eyed viewers of Exhibit C may spot a <b>window unit</b> at far left. The medical, it seems, went well. <span class="blink">HERE WE GO.</span></p>
 
   <hr class="fancy">
 
   <h2 id="rsvp">✉️ RÉPONDEZ, POR FAVOR ✉️</h2>
-  <p class="center" style="font-size:18px">Both buttons mean yes. There is no button for no. This is by design.</p>
+  <p class="center" style="font-size:18px" id="rsvp-line">Both buttons mean yes. There is no button for no. This is by design.</p>
   <p class="center">
     <a class="rsvp-btn rsvp-si"  href="mailto:pmcathey@gmail.com?subject=%C2%A1S%C3%8D!%20%E2%80%94%20I%20will%20be%20on%20the%20couch&body=Save%20me%20a%20cooling%20towel.%20Horchata%20coffee%20order%3A%20">¡SÍ!</a>
     <a class="rsvp-btn rsvp-oui" href="mailto:pmcathey@gmail.com?subject=OUI!%20%E2%80%94%20je%20serai%20sur%20le%20canap%C3%A9&body=Save%20me%20a%20cooling%20towel.%20Horchata%20coffee%20order%3A%20">OUI !</a>
   </p>
-  <p class="center footnote">or just text me like a normal person, which none of us are</p>
+  <p class="center footnote" id="rsvp-note">or just text me like a normal person, which none of us are</p>
 
-  <div class="webring">
+  <div class="webring" id="webring">
     🔗 Proud member of the <b>IBERIA–GALLIA WEBRING</b> 🔗<br>
     [ <a href="https://en.wikipedia.org/wiki/Spain_national_football_team">« prev</a> ]
     [ <a href="https://en.wikipedia.org/wiki/Pyrenees">random</a> ]
     [ <a href="https://en.wikipedia.org/wiki/France_national_football_team">next »</a> ]
   </div>
 
-  <p class="center">
+  <p class="center" id="visitor">
     You are visitor № <span class="counter" id="hitcounter">0000000</span> to this page.<br>
     <span class="footnote">counter certified accurate by the same officials reviewing the offside</span>
   </p>
 
-  <p class="footnote">
+  <p class="footnote" id="colophon">
     Best viewed in Netscape Navigator 4.0 at 800×600 through a beaded curtain.<br>
     Background music (<i>Boléro.mid</i>, 4.2&nbsp;MB) removed on the advice of counsel.<br>
     No cookies on this site except, potentially, physical ones.<br>
@@ -450,10 +488,12 @@
 })();
 
 /* ------------------------------------------------- artisanal hit counter -- */
-(function () {
+function setHitCounter() {
   var n = 141789 + (Math.floor(Date.now() / 60000) % 8000); /* 1417+89: two revolutions */
-  document.getElementById('hitcounter').textContent = ('0000000' + n).slice(-7);
-})();
+  var el = document.getElementById('hitcounter');
+  if (el) el.textContent = ('0000000' + n).slice(-7);
+}
+setHitCounter();
 
 /* -------------------------------- sparkle cursor trail, tricolor-bicolor -- */
 (function () {
@@ -482,6 +522,207 @@
     var now = Date.now();
     if (t && now - last > 60) { spawn(t.clientX, t.clientY); last = now; }
   }, { passive: true });
+})();
+
+/* -------- the anthem jukebox: SMF parser + WebAudio sound-card cosplay --- */
+(function () {
+  function parseMidi(u8) {
+    var d = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+    var p = 0;
+    function u32() { var v = d.getUint32(p); p += 4; return v; }
+    function u16() { var v = d.getUint16(p); p += 2; return v; }
+    function b1()  { return d.getUint8(p++); }
+    function varlen() { var v = 0, b; do { b = b1(); v = (v << 7) | (b & 0x7f); } while (b & 0x80); return v; }
+    if (u32() !== 0x4d546864) throw new Error('not midi');
+    var hlen = u32(); u16(); var ntrk = u16(); var div = u16();
+    p = 8 + hlen;
+    if (div & 0x8000) throw new Error('smpte unsupported');
+    var ons = [], tempos = [{ tick: 0, us: 500000 }];
+    for (var t = 0; t < ntrk; t++) {
+      if (u32() !== 0x4d54726b) throw new Error('bad track');
+      var len = u32(), end = p + len, tick = 0, status = 0;
+      while (p < end) {
+        tick += varlen();
+        var b = b1();
+        if (b < 0x80) { p--; b = status; } else { status = b; }
+        var hi = b & 0xf0, ch = b & 0x0f;
+        if (hi === 0x90 || hi === 0x80) {
+          var note = b1(), vel = b1();
+          ons.push({ tick: tick, on: hi === 0x90 && vel > 0, note: note, vel: vel, ch: ch });
+        } else if (hi === 0xa0 || hi === 0xb0 || hi === 0xe0) { p += 2; }
+        else if (hi === 0xc0 || hi === 0xd0) { p += 1; }
+        else if (b === 0xff) {
+          var type = b1(), l = varlen();
+          if (type === 0x51 && l === 3) tempos.push({ tick: tick, us: (b1() << 16) | (b1() << 8) | b1() });
+          else p += l;
+        } else if (b === 0xf0 || b === 0xf7) { p += varlen(); }
+        else { throw new Error('bad event'); }
+      }
+      p = end;
+    }
+    tempos.sort(function (a, b) { return a.tick - b.tick; });
+    function toSec(tick) {
+      var sec = 0, last = tempos[0];
+      for (var i = 1; i < tempos.length && tempos[i].tick <= tick; i++) {
+        sec += (tempos[i].tick - last.tick) / div * last.us / 1e6;
+        last = tempos[i];
+      }
+      return sec + (tick - last.tick) / div * last.us / 1e6;
+    }
+    ons.sort(function (a, b) { return a.tick - b.tick; });
+    var open = {}, notes = [];
+    ons.forEach(function (e) {
+      var key = e.ch + ':' + e.note;
+      if (e.on) { (open[key] = open[key] || []).push(e); }
+      else if (open[key] && open[key].length) {
+        var s = open[key].shift();
+        var t0 = toSec(s.tick), t1 = toSec(e.tick);
+        if (t1 > t0) notes.push({ t: t0, dur: Math.min(t1 - t0, 6), note: s.note, vel: s.vel, ch: s.ch });
+      }
+    });
+    notes.sort(function (a, b) { return a.t - b.t; });
+    return notes;
+  }
+
+  var PLAYLIST = [
+    { file: 'midi/marcha_real.mid',  label: '🇪🇸 NOW PLAYING: Marcha Real — 8-bit royal fanfare' },
+    { file: 'midi/marseillaise.mid', label: '🇫🇷 NOW PLAYING: La Marseillaise — aux armes, citoyens (chiptune)' }
+  ];
+  var WAVES = ['square', 'triangle', 'sawtooth'];
+  var btn = document.getElementById('anthemBtn');
+  var np = document.getElementById('nowplaying');
+  var ctx = null, master = null, playing = false, timer = null, trackIdx = 0, cache = {};
+
+  function loadTrack(i, cb) {
+    if (cache[i]) return cb(cache[i]);
+    fetch(PLAYLIST[i].file).then(function (r) { return r.arrayBuffer(); }).then(function (ab) {
+      cache[i] = parseMidi(new Uint8Array(ab));
+      cb(cache[i]);
+    }).catch(function () { np.textContent = 'the MIDI failed to load — the band is walking here, please hold'; });
+  }
+
+  function playTrack(i) {
+    loadTrack(i, function (notes) {
+      if (!playing) return;
+      np.textContent = PLAYLIST[i].label;
+      var t0 = ctx.currentTime + 0.25, idx = 0;
+      var lastEnd = notes.length ? notes[notes.length - 1].t + notes[notes.length - 1].dur : 0;
+      clearInterval(timer);
+      timer = setInterval(function () {
+        if (!playing) return;
+        var horizon = ctx.currentTime - t0 + 1.2;
+        while (idx < notes.length && notes[idx].t < horizon) {
+          var n = notes[idx++];
+          if (n.ch === 9) continue; /* percussion: the drum machine stayed home */
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = WAVES[n.ch % WAVES.length];
+          osc.frequency.value = 440 * Math.pow(2, (n.note - 69) / 12);
+          var start = t0 + n.t, stop = start + n.dur;
+          var vol = (n.vel / 127) * 0.16;
+          g.gain.setValueAtTime(0.0001, start);
+          g.gain.linearRampToValueAtTime(vol, start + 0.008);
+          g.gain.setValueAtTime(vol, Math.max(start + 0.008, stop - 0.05));
+          g.gain.linearRampToValueAtTime(0.0001, stop);
+          osc.connect(g); g.connect(master);
+          osc.start(start); osc.stop(stop + 0.02);
+        }
+        if (idx >= notes.length && ctx.currentTime - t0 > lastEnd + 1.5) {
+          clearInterval(timer);
+          trackIdx = (i + 1) % PLAYLIST.length;
+          playTrack(trackIdx); /* et maintenant, l'autre hymne */
+        }
+      }, 200);
+    });
+  }
+
+  btn.addEventListener('click', function () {
+    if (!playing) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain();
+      master.gain.value = 0.9;
+      master.connect(ctx.destination);
+      ctx.resume();
+      playing = true;
+      btn.textContent = '⏸ SILENCE, PLEASE';
+      playTrack(trackIdx);
+    } else {
+      playing = false;
+      clearInterval(timer);
+      if (ctx) { ctx.close(); ctx = null; }
+      btn.textContent = '▶ STRIKE UP THE ANTHEMS';
+      np.textContent = 'himnos suspended — the orchestra is hydrating';
+    }
+  });
+})();
+
+/* ---------------------- EL BOTÓN: full Spanish translation on demand ----- */
+(function () {
+  var ES = {
+    'mq': '⚽ ATENCIÓN MESDAMES, MESSIEURS, Y TODO EL MUNDO ⚽ MAÑANA ⚽ 2:00 PM ⚽ ESPAÑA v FRANCIA ⚽ LA VERDADERA FINAL, HÁBILMENTE DISFRAZADA DE SEMIFINAL ⚽ CASA CATHEY ⚽ TRAE TU PORTÁTIL ⚽ EL CAFÉ DE HORCHATA CORRE COMO EL SENA ⚽ TOALLAS REFRESCANTES INCLUIDAS ⚽ AIRE DE VENTANA: EN NEGOCIACIONES AVANZADAS DE TRASPASO ⚽ TU PUNTITO DE SLACK SIGUE VERDE — TENEMOS LA TECNOLOGÍA ⚽ SE EXPIDEN DISPENSAS OFICIALES IN SITU ⚽ CONFIRMA O TE PERSEGUIRÁ PARA SIEMPRE LO QUE TE PERDISTE ⚽',
+    'subtitle': 'une invitación solennelle &nbsp;·&nbsp; un rendez-vous ibérico &nbsp;·&nbsp; una semifinal más final que la final',
+    'hotline': '☀️ SÍ, hará calor. NO, nada nos detendrá. ☀️',
+    'intro': 'Amigos, romanos, teletrabajadores: la historia rara vez llama dos veces, y mañana saca de centro a las dos. <span class="spain">España</span> y <span class="france">Francia</span> — las dos mejores naciones futbolísticas que respiran actualmente — se citan en una supuesta <i>semifinal</i>, que es como llamar al sol <i>lámpara de tamaño mediano</i>. Lo que ocurra en la final oficial será un epílogo. <b>ESTE</b> es el partido. Y cae, convenientemente, el <b>Día de la Bastilla</b>, porque Francia jamás ha resistido la tentación de ponerse dramática un 14 de julio.',
+    'h-part': '📜 LOS PORMENORES 📜',
+    'details': '<tbody><tr><th>QUOI</th><td><span class="spain">España</span> vs <span class="france">Francia</span> — semifinal del Mundial, es decir, <i>la final, que llegó temprano para evitar el tráfico</i>.</td></tr><tr><th>QUAND</th><td><b>MAÑANA — martes 14 de julio — 2:00 PM</b> (murmullo previo y asignación de bebidas desde la 1:30).</td></tr><tr><th>DÓNDE</th><td><b>Casa Cathey.</b> Ya sabes cuál. El sofá se acuerda de ti. Si de verdad no sabes dónde vivo, responde a la invitación y confiésalo.</td></tr><tr><th>APPORTEZ</th><td><b>Tu portátil.</b> Es martes. Son las 2 PM. No hagas más preguntas y nadie te las hará a ti. Tu puntito de Slack brillará con un verde sereno y verosímil mientras tu alma está en Dallas. Hay WiFi. Hay coartadas. Excel puede quedar abierto en una ventanita. Esto queda entre tú y tus dioses.</td></tr><tr><th>ETIQUETA</th><td>Rojo, amarillo, bleu, blanc — o en pijama, no somos la ONU.</td></tr></tbody>',
+    'cd-note': 'días : horas : minutos : segundos hasta que la Tierra deje brevemente de girar',
+    'h-climate': '❄️ SITUACIÓN CLIMÁTICA: DECLARACIÓN PLENA Y HONESTA ❄️',
+    'clim-intro': 'No hay aire acondicionado central. Nunca lo hubo. El aire central es, como la verdadera final del Mundial, una idea hermosa que vive en otra parte. <b>SIN EMBARGO,</b> tu delegación de confort incluye:',
+    'am-fans': '🌀 <b>Una falange de ventiladores oscilantes</b>, dispuestos en 4-4-2, cada uno motivado personalmente.',
+    'am-coffee': '🧊 <b>Café de horchata con hielo</b>, frío como un contragolpe francés, dulce como un caño de Yamal. Sin fondo, más o menos.',
+    'am-towels': '🧣 <b>Toallas refrescantes</b>, enfriadas y repartidas al descanso como una sustitución que se puede vestir.',
+    'am-window': '🪟 <b>Un aire de ventana</b> está en <i>negociaciones avanzadas de traspaso</i>. Términos personales acordados; reconocimiento médico por la mañana. Nos dicen que «quiere venir». Anuncio pendiente. <span class="blink">¿HERE WE GO?</span>',
+    'h-past': '⚖️ CARTA PASTORAL A LOS RESPONSABLES ⚖️',
+    'past-intro': 'Sabemos quién eres. Estás <i>«hasta arriba»</i>. Tienes <i>«un entregable»</i>. Pensabas <i>«ver el resumen luego»</i>. Esta sección fue escrita para ti, con cariño, por el Subcomité para Aprovechar el Día.',
+    'faq': '<p><b>«Tengo reuniones.»</b><br>El sofá admite videollamadas. La pared del fondo es beige y no cuenta nada. Estarás en silencio, hidratado y moralmente arropado. Si tienes que decir «lo vemos luego», dilo durante un saque de banda.</p><p><b>«Estoy hasta arriba.»</b><br>El trabajo seguirá ahí a las 5:00. Lamine Yamal tendrá diecinueve años exactamente un año, y España se cruza con Francia en eliminatoria de Mundial aproximadamente una vez por papado.</p><p><b>«Ya veré la repetición esta noche.»</b><br>Nadie en la historia documentada ha visto la repetición. Sabrás el resultado a las 4:15 quieras o no — las notificaciones nos cazan a todos. El directo es historia. La repetición son deberes.</p><p><b>«¿Esto es una irresponsabilidad?»</b><br>Camus fue portero. Unamuno hizo guardia. Tú mantendrás el portátil abierto. Aquí todo el mundo está, a ojos de la ley y del directorio LDAP, <i>trabajando</i>.</p><p><b>«¿Y si alguien pregunta qué hice el martes por la tarde?»</b><br>«Offsite interdepartamental. Alta participación. Varios puntos de acción gritados a un televisor.»</p>',
+    'mathbox': '<b>LA ARITMÉTICA, PARA LA MENTE RACIONAL 🧮</b><br>90 minutos + descuento + prórroga + penaltis <i>(Dios mediante)</i> ≈ <b>el 0,03% de tu año</b>.<br>El arrepentimiento de perdértelo: <b>interés compuesto trimestral, para siempre.</b><br><span class="footnote">Esto no es asesoramiento financiero. Es mejor que el asesoramiento financiero.</span>',
+    'dotline': '<span class="dot"></span> TU PUNTITO: VERDE &nbsp;·&nbsp; <span class="dot"></span> TU CORAZÓN: LLENO &nbsp;·&nbsp; <span class="dot"></span> TU COARTADA: BLINDADA',
+    'coupon': '<div class="footnote">✂ — — — — — — — — — recorte por aquí y preséntelo a absolutamente nadie — — — — — — — — — ✂</div><h3 style="margin:10px 0 6px">DISPENSA OFICIAL № 1789</h3><p style="margin:6px 0">El portador, <span class="blankline">&nbsp;</span>, queda eximido de toda <b>ambición visible</b> entre la 1:30 PM y el pitido final (prórroga y penaltis incluidos, <i>si Dieu le veut</i>), por razones de <b>necesidad histórica</b>.</p><p style="margin:6px 0">Esta indulgencia no la reconoce ninguna institución y la honra toda la gente de bien.</p><p style="margin:10px 0 4px; font-family: Georgia, serif; font-style: italic;">— El Subcomité para Aprovechar el Día (fundado también en 1789)</p>',
+    'h-tape': '⚔️ EL CARA A CARA ⚔️',
+    'f-esp': '<h3><span class="spain">LAMINE YAMAL</span> 🇪🇸</h3>Cumplió <b>19 años AYER</b>, y piensa celebrarlo haciendo que defensas hechos y derechos se replanteen la carrera. Ha vivido menos Mundiales que algunas de mis plantas. Juega como escribía Lorca — zurdo, al atardecer, injustamente.',
+    'f-fra': '<h3><span class="france">KYLIAN MBAPPÉ</span> 🇫🇷</h3>Corre más rápido que un rumor. El Día de la Bastilla, en eliminatoria, un francés con un cañón por pierna — esto no es deporte, es <i>teatro nacional</i>. Trae un banderín de fuera de juego y un poema; harán falta los dos y no servirá ninguno.',
+    'tape-note': 'Uno de estos hombres nos romperá el corazón. El otro también, de otra manera. Asistencia obligatoria para un reparto equitativo del desamor.',
+    'camus-x': '«Todo lo que sé con mayor certeza sobre la moral y las obligaciones de los hombres, se lo debo al fútbol.»',
+    'camus-c': '— Albert Camus, portero primero, premio Nobel como plan B',
+    'camus-h': '(pase el cursor para el castellano — el sentido, como un buen disparo, llega un instante después del toque)',
+    'day115-cap': '<b>La tradición perdura.</b> Día 115 de malabares mientras recita <i>El extranjero</i>. Camus lo habría entendido. Camus habría contado los toques.',
+    'lorca-x': '(Esto ya estaba en español. Respire usted con tranquilidad.)',
+    'lorca-c': '— según Federico García Lorca, <i>Llanto</i>, amablemente reprogramado de las cinco de la tarde y trasladado a interior, con disculpas a Andalucía',
+    'lorca-h': '(pose el cursor sobre el poema — aquí no hay nada que traducir, pero el gesto se agradece)',
+    'una-t': 'Unamuno escribió sobre <i>el sentimiento trágico de la vida</i> — ese dolor de querer algo eterno sabiendo que nada lo es. Describía, con precisión inquietante, lo que es seguir a una selección en eliminatorias. Ven a sentirte infinito durante noventa minutos más el descuento.',
+    'una-c': '— Miguel de Unamuno, parafraseado mucho más allá de lo que habría tolerado',
+    'h-evid': '📸 PRUEBAS DEL RECINTO 📸',
+    'evid-note': '(todas las pruebas autenticadas por el Subcomité; sin retoques, sin VAR)',
+    'polaroids': '<div class="polaroid"><div class="frame"><img src="pics/host.jpg" alt="foto antigua de niños entrenando al fútbol en un campo urbano" style="object-position:50% 35%"></div><b>Prueba A — Su anfitrión</b>, en pleno tormento, durante un ciclo mundialista anterior. Hubo ojeadores. No devolvieron las llamadas.</div><div class="polaroid"><div class="frame"><img src="pics/dog.jpg" alt="un perro negro tumbado con dignidad dentro de una caja de cartón" style="object-position:50% 30%"></div><b>Prueba B — El perro</b>, mascota oficial, parte neutral, retratado en su palco de cartón. Aforo del palco: limitadísimo.</div><div class="polaroid"><div class="frame"><img src="pics/tv.jpg" alt="un televisor sobre una chimenea blanca flanqueado por estanterías"></div><b>Prueba C — El televisor</b>, a la altura de la ocasión, flanqueado por los trofeos de campañas anteriores.</div><div class="polaroid"><div class="frame"><img src="pics/couch.jpg" alt="un sofá mullido y profundo con muchos cojines"></div><b>Prueba D — El sofá</b>, invicto en casa. Sienta a una nación. Se muestra con el material oficial de entrenamiento.</div>',
+    'window-note': 'Los observadores atentos de la Prueba C detectarán un <b>aire de ventana</b> a la izquierda del todo. El reconocimiento médico, por lo visto, salió bien. <span class="blink">HERE WE GO.</span>',
+    'rsvp-line': 'Los dos botones significan que sí. No hay botón para el no. Es a propósito.',
+    'rsvp-note': 'o escríbeme como una persona normal, cosa que no es ninguno de nosotros',
+    'webring': '🔗 Miembro orgulloso del <b>WEBRING IBERIA–GALLIA</b> 🔗<br>[ <a href="https://es.wikipedia.org/wiki/Selecci%C3%B3n_de_f%C3%BAtbol_de_Espa%C3%B1a">« ant</a> ] [ <a href="https://es.wikipedia.org/wiki/Pirineos">azar</a> ] [ <a href="https://es.wikipedia.org/wiki/Selecci%C3%B3n_de_f%C3%BAtbol_de_Francia">sig »</a> ]',
+    'visitor': 'Usted es el visitante № <span class="counter" id="hitcounter">0000000</span> de esta página.<br><span class="footnote">contador certificado por los mismos colegiados que revisan el fuera de juego</span>',
+    'colophon': 'Se ve mejor en Netscape Navigator 4.0 a 800×600 a través de una cortina de cuentas.<br>Música de fondo (<i>Boléro.mid</i>, 4,2&nbsp;MB) retirada por consejo de la asesoría jurídica.<br>En este sitio no hay cookies salvo, potencialmente, las físicas.<br><a href="/">⟵ volver al portafolio regularmente programado de Paul Cathey</a>'
+  };
+  var EN = {};
+  var mode = 'en';
+  try { mode = localStorage.getItem('cdg-lang') || 'en'; } catch (e) {}
+  var btn = document.createElement('button');
+  btn.id = 'langbtn';
+  btn.type = 'button';
+  document.body.appendChild(btn);
+  function apply(m) {
+    for (var id in ES) {
+      var el = document.getElementById(id);
+      if (!el) continue;
+      if (!(id in EN)) EN[id] = el.innerHTML;
+      el.innerHTML = (m === 'es') ? ES[id] : EN[id];
+    }
+    document.documentElement.lang = (m === 'es') ? 'es' : 'en';
+    btn.textContent = (m === 'es') ? '🇬🇧 BACK TO ENGLISH' : '🇪🇸 ¡EN ESPAÑOL, POR FAVOR!';
+    setHitCounter();
+    mode = m;
+    try { localStorage.setItem('cdg-lang', m); } catch (e) {}
+  }
+  btn.addEventListener('click', function () { apply(mode === 'es' ? 'en' : 'es'); });
+  apply(mode);
 })();
 
 /* --------------------------- click anywhere: a tiny burst of ¡olé!/allez -- */

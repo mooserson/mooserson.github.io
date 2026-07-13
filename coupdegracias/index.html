@@ -239,19 +239,22 @@
   }
   #langbtn:active { border-style: inset; }
   #langbtn-fr {
-    position: fixed; right: 16px; bottom: 74px; z-index: 10000;
-    font-family: inherit; font-size: 16px; font-weight: bold;
-    padding: 12px 18px; cursor: pointer;
+    position: fixed; left: 16px; right: auto; bottom: 16px; z-index: 10000;
+    font-family: inherit; font-size: 15px; font-weight: bold;
+    padding: 12px 16px; cursor: pointer;
     border: 5px outset #6f9fd8;
     background: linear-gradient(#0055a4, #003a70);
     color: #fff; text-shadow: 1px 1px 0 #000;
     box-shadow: 0 6px 18px rgba(0,0,0,.55);
     transform: rotate(2deg);
     animation: bob 2.6s ease-in-out infinite reverse;
-    max-width: 62vw;
+    max-width: 44vw;
   }
-  #langbtn { max-width: 62vw; }
+  #langbtn { font-size: 15px; padding: 12px 16px; max-width: 44vw; }
   #langbtn-fr:active { border-style: inset; }
+  @media (max-width: 430px) {
+    #langbtn, #langbtn-fr { font-size: 13px; padding: 10px 12px; }
+  }
   @keyframes bob {
     0%, 100% { transform: rotate(-2deg) translateY(0); }
     50% { transform: rotate(2deg) translateY(-7px); }
@@ -630,7 +633,7 @@ setHitCounter();
   var btn = document.getElementById('anthemBtn');
   var skipBtn = document.getElementById('skipBtn');
   var np = document.getElementById('nowplaying');
-  var ctx = null, master = null, playing = false, timer = null, cache = {};
+  var ctx = null, master = null, bus = null, playing = false, timer = null, cache = {};
   var trackIdx = Math.random() < 0.5 ? 0 : 1; /* coin toss decides who kicks off */
 
   function loadTrack(i, cb) {
@@ -641,26 +644,32 @@ setHitCounter();
     }).catch(function () { np.textContent = 'the MIDI failed to load — the band is walking here, please hold'; });
   }
 
-  /* a fresh AudioContext hard-cuts anything still ringing from the last track */
-  function freshCtx() {
-    if (ctx) { try { ctx.close(); } catch (e) {} }
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    master = ctx.createGain();
-    master.gain.value = 0.9;
-    master.connect(ctx.destination);
-    ctx.resume();
+  function ensureCtx() {
+    if (!ctx) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain();
+      master.gain.value = 0.9;
+      master.connect(ctx.destination);
+    }
+  }
+  /* a fresh voice bus hard-cuts whatever is still ringing, no new context needed */
+  function newBus() {
+    if (bus) { try { bus.disconnect(); } catch (e) {} }
+    bus = ctx.createGain();
+    bus.connect(master);
+    return bus;
   }
 
   function playTrack(i) {
     loadTrack(i, function (notes) {
       if (!playing) return;
       np.textContent = PLAYLIST[i].label;
+      var myBus = newBus(); /* also silences any previous track instantly */
       var t0 = ctx.currentTime + 0.25, idx = 0;
-      var mine = ctx; /* if the context gets swapped by a skip, abandon this loop */
       var lastEnd = notes.length ? notes[notes.length - 1].t + notes[notes.length - 1].dur : 0;
       clearInterval(timer);
       timer = setInterval(function () {
-        if (!playing || ctx !== mine) { clearInterval(timer); return; }
+        if (!playing || bus !== myBus) { clearInterval(timer); return; }
         var horizon = ctx.currentTime - t0 + 1.2;
         while (idx < notes.length && notes[idx].t < horizon) {
           var n = notes[idx++];
@@ -675,7 +684,7 @@ setHitCounter();
           g.gain.linearRampToValueAtTime(vol, start + 0.008);
           g.gain.setValueAtTime(vol, Math.max(start + 0.008, stop - 0.05));
           g.gain.linearRampToValueAtTime(0.0001, stop);
-          osc.connect(g); g.connect(master);
+          osc.connect(g); g.connect(myBus);
           osc.start(start); osc.stop(stop + 0.02);
         }
         if (idx >= notes.length && ctx.currentTime - t0 > lastEnd + 1.5) {
@@ -687,34 +696,48 @@ setHitCounter();
     });
   }
 
-  function start() {
-    freshCtx();
-    playing = true;
-    btn.textContent = '⏸ SILENCE, PLEASE';
-    playTrack(trackIdx);
+  /* Must run inside a user gesture. Mobile browsers keep audio locked until a
+     real tap/click, and only unlock after a buffer actually plays — hence the
+     one-sample silent nudge before we trust the context. */
+  function tryStart() {
+    if (playing) return;
+    ensureCtx();
+    try {
+      var b = ctx.createBuffer(1, 1, 22050), s = ctx.createBufferSource();
+      s.buffer = b; s.connect(master); s.start(0);
+    } catch (e) {}
+    var go = function () {
+      if (playing) return;
+      if (!ctx || ctx.state !== 'running') return; /* still locked — stay armed for the next tap */
+      disarm();
+      playing = true;
+      btn.textContent = '⏸ SILENCE, PLEASE';
+      playTrack(trackIdx);
+    };
+    var p = ctx.resume();
+    if (p && p.then) p.then(go, go); else go();
   }
   function stop() {
     playing = false;
     clearInterval(timer);
-    if (ctx) { try { ctx.close(); } catch (e) {} ctx = null; }
+    if (bus) { try { bus.disconnect(); } catch (e) {} bus = null; }
+    if (ctx && ctx.suspend) ctx.suspend();
     btn.textContent = '▶ STRIKE UP THE ANTHEMS';
     np.textContent = 'himnos suspended — the orchestra is hydrating';
   }
 
-  btn.addEventListener('click', function () { disarm(); playing ? stop() : start(); });
+  btn.addEventListener('click', function () { playing ? stop() : tryStart(); });
   skipBtn.addEventListener('click', function () {
-    disarm();
     trackIdx = (trackIdx + 1) % PLAYLIST.length;
-    if (playing) { clearInterval(timer); freshCtx(); playTrack(trackIdx); } /* hard-cut to the other hymne */
-    else start();
+    if (playing) { clearInterval(timer); playTrack(trackIdx); } /* new bus = instant hard-cut */
+    else tryStart();
   });
 
-  /* autoplay: browsers forbid sound before a gesture, so we pounce on the first one */
-  var GESTURES = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'mousemove'];
+  /* autoplay: pounce on the visitor's first real interaction (taps unlock mobile) */
+  var GESTURES = ['click', 'touchend', 'keydown', 'pointerup', 'scroll', 'mousemove'];
   function armFn(e) {
     if (e && (e.target === btn || e.target === skipBtn)) return; /* let the buttons speak for themselves */
-    disarm();
-    if (!playing) start();
+    tryStart();
   }
   function disarm() {
     GESTURES.forEach(function (g) { removeEventListener(g, armFn, true); });
@@ -841,8 +864,8 @@ setHitCounter();
       el.innerHTML = (dict && dict[id] != null) ? dict[id] : EN[id];
     }
     document.documentElement.lang = (m === 'es') ? 'es' : (m === 'fr') ? 'fr' : 'en';
-    esBtn.textContent = (m === 'es') ? '🇬🇧 BACK TO ENGLISH' : '🇪🇸 ¡EN ESPAÑOL, POR FAVOR!';
-    frBtn.textContent = (m === 'fr') ? '🇬🇧 BACK TO ENGLISH' : '🇫🇷 EN FRANÇAIS, S’IL VOUS PLAÎT';
+    esBtn.textContent = (m === 'es') ? '🇬🇧 ENGLISH' : '🇪🇸 ¡ESPAÑOL!';
+    frBtn.textContent = (m === 'fr') ? '🇬🇧 ENGLISH' : '🇫🇷 FRANÇAIS !';
     setHitCounter();
     mode = m;
     try { localStorage.setItem('cdg-lang', m); } catch (e) {}

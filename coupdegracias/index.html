@@ -102,6 +102,17 @@
     position: relative;
   }
   blockquote.poem cite { display: block; text-align: right; margin-top: 10px; font-size: 15px; }
+  .xlate {
+    display: block; max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height .7s ease, opacity .9s ease, margin-top .7s ease;
+    color: #3c5a3c; border-left: 3px solid #b08d00; padding-left: 12px;
+  }
+  blockquote.poem:hover .xlate, blockquote.poem:focus .xlate,
+  blockquote.poem:focus-within .xlate, blockquote.poem:active .xlate {
+    max-height: 220px; opacity: 1; margin-top: 12px;
+  }
+  .xlate-hint { display: block; margin-top: 8px; }
+  blockquote.poem:hover .xlate-hint, blockquote.poem:focus .xlate-hint { visibility: hidden; }
   blockquote.poem .vs { font-style: italic; }
 
   .tape { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
@@ -334,14 +345,21 @@
     <cite>— Albert Camus, goalkeeper first, Nobel laureate as a fallback plan</cite>
   </blockquote>
 
-  <blockquote class="poem">
+  <blockquote class="poem" tabindex="0">
     <i>A las dos de la tarde.<br>
     Eran las dos en punto de la tarde.<br>
     Un sofá ya estaba dispuesto,<br>
     a las dos de la tarde.<br>
     Lo demás era calor y solamente calor,<br>
     a las dos de la tarde.</i>
+    <span class="xlate">At two in the afternoon.<br>
+    It was two o'clock sharp in the afternoon.<br>
+    A couch was already laid out,<br>
+    at two in the afternoon.<br>
+    The rest was heat and only heat,<br>
+    at two in the afternoon.</span>
     <cite>— after Federico García Lorca, <i>Llanto</i>, lightly rescheduled from five o'clock and moved indoors, with apologies to Andalusia</cite>
+    <span class="footnote xlate-hint">(rest your cursor upon the poem for the English — hover, the way a doubtful referee hovers over the monitor)</span>
   </blockquote>
 
   <blockquote class="poem">

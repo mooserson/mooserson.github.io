@@ -201,6 +201,14 @@
   img.pixel { image-rendering: pixelated; max-width: 100%; height: auto; }
   .gifrow { text-align: center; }
 
+  /* the hero band up top */
+  .heroband { margin: 6px 0 18px; }
+  .hero { width: 100%; display: block; border: 6px ridge #b08d00; box-sizing: border-box; }
+  .duo { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .duo figure { flex: 1 1 240px; margin: 0; text-align: center; }
+  .duo img { width: 100%; display: block; border: 4px ridge #999; box-sizing: border-box; }
+  .duo figcaption { margin-top: 5px; }
+
   /* the MIDI jukebox */
   #jukebox {
     background: #000; border: 4px inset #555; color: #39ff14;
@@ -283,6 +291,21 @@
     <b>This</b> is the match. And it is happening, conveniently, on <b>Bastille Day</b>,
     because France has never once resisted the urge to be dramatic on July 14th.
   </p>
+
+  <div class="heroband">
+    <img class="hero" src="pics/duel.jpg" alt="Lamine Yamal in Spain's red shirt shielding the ball from Kylian Mbappé in France's white away kit">
+    <p class="center footnote" id="cap-duel">The principals, at their previous meeting (Euro 2024). Tomorrow, the argument resumes.</p>
+    <div class="duo">
+      <figure>
+        <img src="pics/map.jpg" alt="a colorful political map of Spain and France sharing the Pyrenees">
+        <figcaption class="footnote" id="cap-map">The theatre of operations. Two proud nations, one shared mountain range, zero agreement on dinner time.</figcaption>
+      </figure>
+      <figure>
+        <img src="pics/lunch.jpg" alt="side-by-side comparison photo of a Spanish lunch and a French lunch">
+        <figcaption class="footnote" id="cap-lunch">The stakes, visualized. Both civilizations peaked at lunch; tomorrow we settle whose.</figcaption>
+      </figure>
+    </div>
+  </div>
 
   <div class="gifrow"><img class="pixel" src="gifs/flames.gif" alt="a strip of dancing pixel flames" width="640" height="88"></div>
 
@@ -663,6 +686,9 @@ setHitCounter();
     'subtitle': 'une invitación solennelle &nbsp;·&nbsp; un rendez-vous ibérico &nbsp;·&nbsp; una semifinal más final que la final',
     'hotline': '☀️ SÍ, hará calor. NO, nada nos detendrá. ☀️',
     'intro': 'Amigos, romanos, teletrabajadores: la historia rara vez llama dos veces, y mañana saca de centro a las dos. <span class="spain">España</span> y <span class="france">Francia</span> — las dos mejores naciones futbolísticas que respiran actualmente — se citan en una supuesta <i>semifinal</i>, que es como llamar al sol <i>lámpara de tamaño mediano</i>. Lo que ocurra en la final oficial será un epílogo. <b>ESTE</b> es el partido. Y cae, convenientemente, el <b>Día de la Bastilla</b>, porque Francia jamás ha resistido la tentación de ponerse dramática un 14 de julio.',
+    'cap-duel': 'Los protagonistas, en su encuentro anterior (Eurocopa 2024). Mañana se reanuda la discusión.',
+    'cap-map': 'El teatro de operaciones. Dos naciones orgullosas, una cordillera compartida, cero acuerdo sobre la hora de cenar.',
+    'cap-lunch': 'Lo que está en juego, visualizado. Ambas civilizaciones alcanzaron su cumbre a la hora de comer; mañana se decide cuál.',
     'h-part': '📜 LOS PORMENORES 📜',
     'details': '<tbody><tr><th>QUOI</th><td><span class="spain">España</span> vs <span class="france">Francia</span> — semifinal del Mundial, es decir, <i>la final, que llegó temprano para evitar el tráfico</i>.</td></tr><tr><th>QUAND</th><td><b>MAÑANA — martes 14 de julio — 2:00 PM</b> (murmullo previo y asignación de bebidas desde la 1:30).</td></tr><tr><th>DÓNDE</th><td><b>Casa Cathey.</b> Ya sabes cuál. El sofá se acuerda de ti. Si de verdad no sabes dónde vivo, responde a la invitación y confiésalo.</td></tr><tr><th>APPORTEZ</th><td><b>Tu portátil.</b> Es martes. Son las 2 PM. No hagas más preguntas y nadie te las hará a ti. Tu puntito de Slack brillará con un verde sereno y verosímil mientras tu alma está en Dallas. Hay WiFi. Hay coartadas. Excel puede quedar abierto en una ventanita. Esto queda entre tú y tus dioses.</td></tr><tr><th>ETIQUETA</th><td>Rojo, amarillo, bleu, blanc — o en pijama, no somos la ONU.</td></tr></tbody>',
     'cd-note': 'días : horas : minutos : segundos hasta que la Tierra deje brevemente de girar',

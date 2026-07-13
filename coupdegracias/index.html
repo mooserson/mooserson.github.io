@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<!-- ====================================================================
+     COUP DE GRÂCIAS · a semifinal more final than the final
+     hand-coded with reverence for the old web and no reverence for anything else
+     ==================================================================== -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⚽ COUP DE GRÂCIAS ⚽ España v France ⚽ Chez Cathey ⚽</title>
+<meta property="og:title" content="COUP DE GRÂCIAS — Spain v France, Chez Cathey">
+<meta property="og:description" content="Tomorrow. 2 PM. The true final, disguised as a semifinal. Fans, iced horchata coffee, cooling towels, poetry. Bring your laptop. Your Slack dot stays green; your heart does not.">
+<meta property="og:image" content="https://paulcathey.com/coupdegracias/gifs/construction.gif">
+<link rel="icon" href="../favicon.png">
+<style>
+  /* ------------------------------------------------ the old ways -- */
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive;
+    color: #1a1a1a;
+    cursor: crosshair;
+    background-color: #0b3d0b;
+    /* pitch stripes, as mown by a groundskeeper with feelings */
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 60px, rgba(0,0,0,.10) 60px 120px),
+      radial-gradient(circle at 50% -20%, #2e7d32 0%, #0b3d0b 70%);
+    background-attachment: fixed;
+  }
+  #page {
+    max-width: 780px;
+    margin: 18px auto;
+    background: #fffbe8;
+    border: 6px ridge #c9a400;
+    box-shadow: 0 0 0 4px #a1131f, 0 0 0 8px #ffd900, 0 0 0 12px #0055a4, 0 0 40px #000;
+    padding: 0 22px 30px;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { text-align: center; }
+  .center { text-align: center; }
+  hr.fancy { border: none; border-top: 4px double #a1131f; margin: 26px 8%; }
+
+  /* rainbow WordArt title */
+  .wordart {
+    font-size: clamp(34px, 7vw, 62px);
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 10px 0 0;
+    background: linear-gradient(90deg,#a1131f,#ffd900,#0055a4,#ffffff,#ef4135,#ffd900,#a1131f);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1.5px #3a1d00;
+    animation: raincycle 6s linear infinite;
+    text-shadow: 3px 4px 0 rgba(0,0,0,.18);
+    transform: rotate(-2deg);
+  }
+  @keyframes raincycle { to { background-position: 400% 0; } }
+
+  .subtitle {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 19px;
+    margin-top: 4px;
+  }
+
+  /* the resurrection of <blink> */
+  .blink { animation: blink 1.06s steps(2, start) infinite; }
+  @keyframes blink { to { visibility: hidden; } }
+
+  .spain  { color: #a1131f; font-weight: bold; }
+  .gold   { color: #b08d00; font-weight: bold; }
+  .france { color: #0055a4; font-weight: bold; }
+  .rouge  { color: #ef4135; font-weight: bold; }
+
+  marquee, .marquee { background: #000; color: #ffd900; padding: 6px 0; font-size: 17px; border-top: 3px solid #ef4135; border-bottom: 3px solid #0055a4; }
+
+  table.details {
+    margin: 0 auto; border-collapse: collapse; width: 96%;
+    background: #fff; border: 4px outset #888;
+    font-size: 17px;
+  }
+  table.details td, table.details th {
+    border: 2px inset #bbb; padding: 10px 12px; vertical-align: top;
+  }
+  table.details th {
+    background: repeating-linear-gradient(45deg,#ffd900 0 12px,#a1131f 12px 24px);
+    color: #fff; text-shadow: 1px 1px 2px #000; font-size: 18px;
+    width: 130px;
+  }
+
+  .amenity { margin: 10px 0; font-size: 17px; }
+
+  blockquote.poem {
+    font-family: Georgia, "Times New Roman", serif;
+    background: #fff;
+    border: 3px double #666;
+    margin: 18px 6%;
+    padding: 16px 22px;
+    box-shadow: 6px 6px 0 rgba(0,0,0,.25);
+    position: relative;
+  }
+  blockquote.poem cite { display: block; text-align: right; margin-top: 10px; font-size: 15px; }
+  blockquote.poem .vs { font-style: italic; }
+
+  .tape { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+  .tape .fighter {
+    flex: 1 1 260px; max-width: 330px; background: #fff;
+    border: 4px ridge #999; padding: 12px 16px; font-size: 16px;
+  }
+  .fighter h3 { margin: 4px 0 8px; }
+  .fighter.esp { border-color: #a1131f; background: #fff6f0; }
+  .fighter.fra { border-color: #0055a4; background: #f0f6ff; }
+
+  .polaroids { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; }
+  .polaroid {
+    background: #fff; padding: 10px 10px 14px; border: 1px solid #ccc;
+    box-shadow: 4px 5px 8px rgba(0,0,0,.35);
+    width: 170px; text-align: center; font-size: 14px;
+  }
+  .polaroid:nth-child(odd)  { transform: rotate(-3deg); }
+  .polaroid:nth-child(even) { transform: rotate(2.5deg); }
+  .polaroid .frame {
+    height: 120px; background: repeating-conic-gradient(#e8e8e8 0% 25%, #f7f7f7 0% 50%) 0 0/16px 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: #888; font-style: italic; border: 1px solid #ddd;
+    font-family: Georgia, serif;
+  }
+
+  .rsvp-btn {
+    display: inline-block; margin: 8px 12px; padding: 14px 34px;
+    font-family: inherit; font-size: 26px; font-weight: bold; cursor: pointer;
+    border: 5px outset; text-decoration: none;
+  }
+  .rsvp-btn:active { border-style: inset; }
+  .rsvp-si  { background: #ffd900; color: #a1131f; border-color: #ffea70; }
+  .rsvp-oui { background: #0055a4; color: #fff;    border-color: #7fb2e5; }
+
+  #countdown {
+    font-family: "Courier New", monospace; font-size: clamp(22px, 5vw, 34px);
+    font-weight: bold; background: #000; color: #39ff14;
+    display: inline-block; padding: 10px 22px; border: 4px inset #555;
+    letter-spacing: 2px;
+  }
+
+  .counter { font-family: "Courier New", monospace; background:#000; color:#f00; padding: 3px 8px; border: 2px inset #666; letter-spacing: 3px; }
+
+  .webring { background: #dcd6f7; border: 3px ridge #9a8cd8; padding: 10px; font-size: 15px; margin: 20px 4%; text-align: center; }
+  .webring a { color: #3a0ca3; }
+
+  .footnote { font-size: 13px; color: #555; text-align: center; }
+
+  .flag-bar { display: flex; height: 14px; margin: 14px 0; }
+  .flag-bar div { flex: 1; }
+
+  img.pixel { image-rendering: pixelated; max-width: 100%; height: auto; }
+  .gifrow { text-align: center; }
+
+  /* sparkles */
+  .sparkle {
+    position: fixed; pointer-events: none; z-index: 9999;
+    font-size: 14px; user-select: none;
+    animation: fall 1.1s ease-in forwards;
+  }
+  @keyframes fall {
+    from { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+    to   { opacity: 0; transform: translateY(60px) rotate(220deg) scale(.3); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; }
+    marquee { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<marquee scrollamount="7">⚽ ATTENTION MESDAMES, MESSIEURS, Y TODO EL MUNDO ⚽ TOMORROW ⚽ 2:00 PM ⚽ ESPAÑA v FRANCE ⚽ THE TRUE FINAL, CLEVERLY DISGUISED AS A SEMIFINAL ⚽ CASA CATHEY ⚽ BYO LAPTOP ⚽ HORCHATA COFFEE FLOWS LIKE THE SEINE ⚽ COOLING TOWELS PROVIDED ⚽ WINDOW UNIT: IN ADVANCED TRANSFER NEGOTIATIONS ⚽ RSVP OR BE FOREVER HAUNTED BY WHAT YOU MISSED ⚽</marquee>
+
+<div id="page">
+
+  <div class="center" style="margin-top:16px">
+    <img class="pixel" src="gifs/new.gif" alt="NEW!" width="66" height="66">
+    <h1 class="wordart">COUP DE GRÂCIAS</h1>
+    <div class="subtitle">une invitación solennelle &nbsp;·&nbsp; un rendez-vous ibérico &nbsp;·&nbsp; a semifinal más final than the final</div>
+    <div class="flag-bar" aria-hidden="true">
+      <div style="background:#a1131f"></div><div style="background:#ffd900"></div><div style="background:#a1131f"></div>
+      <div style="background:#0055a4"></div><div style="background:#fff;border-top:1px solid #ddd;border-bottom:1px solid #ddd"></div><div style="background:#ef4135"></div>
+    </div>
+  </div>
+
+  <p class="center" style="font-size:18px">
+    <span class="blink">☀️ YES it will be hot. NO we will not be stopped. ☀️</span>
+  </p>
+
+  <p style="font-size:18px; line-height:1.55">
+    Friends, Romans, remote workers: history rarely knocks twice, and tomorrow it kicks off at two.
+    <span class="spain">Spain</span> and <span class="france">France</span> — the two best footballing nations
+    currently drawing breath — meet in a so-called <i>semifinal</i>, which is like calling the sun a
+    <i>medium-sized lamp</i>. Whatever happens in the actual final will be an epilogue.
+    <b>This</b> is the match. And it is happening, conveniently, on <b>Bastille Day</b>,
+    because France has never once resisted the urge to be dramatic on July 14th.
+  </p>
+
+  <div class="gifrow"><img class="pixel" src="gifs/flames.gif" alt="a strip of dancing pixel flames" width="640" height="88"></div>
+
+  <h2>📜 THE PARTICULARS 📜</h2>
+  <table class="details">
+    <tr><th>QUOI</th><td><span class="spain">España</span> vs <span class="france">France</span> — World Cup semifinal, a.k.a. <i>the final, arriving early to beat traffic</i>.</td></tr>
+    <tr><th>QUAND</th><td><b>TOMORROW — Monday, July 14th — 2:00 PM</b> (pregame murmuring and beverage assignment from 1:30).</td></tr>
+    <tr><th>DÓNDE</th><td><b>Casa Cathey.</b> You know the one. The couch remembers you. If you genuinely don't know where I live, reply to the invite and confess.</td></tr>
+    <tr><th>APPORTEZ</th><td><b>Your laptop.</b> It is a Monday. It is 2 PM. Ask no further questions and none shall be asked of you. Your Slack dot will glow a serene, plausible green while your soul is in Dallas. WiFi provided. Alibis provided. Excel may be open in a small window. This is between you and your gods.</td></tr>
+    <tr><th>DRESS CODE</th><td>Rojo, amarillo, bleu, blanc — or pajamas, we're not the UN.</td></tr>
+  </table>
+
+  <p class="center" style="margin-top:22px">
+    <span id="countdown" aria-live="off">--:--:--:--</span><br>
+    <span class="footnote">days : hours : minutes : seconds until the earth briefly stops rotating</span>
+  </p>
+
+  <hr class="fancy">
+
+  <h2>❄️ CLIMATE SITUATION: A FULL &amp; HONEST DISCLOSURE ❄️</h2>
+  <div class="gifrow"><img class="pixel" src="gifs/construction.gif" alt="yellow and black striped banner reading CLIMATE UNDER CONSTRUCTION" width="528" height="84"></div>
+  <p class="amenity">There is no central air. There was never central air. Central air is, like the true World Cup final, a beautiful idea that lives elsewhere. <b>HOWEVER,</b> your comfort delegation includes:</p>
+  <div class="amenity">🌀 <b>A phalanx of oscillating fans</b>, arranged in a 4-4-2, each one personally motivated.</div>
+  <div class="amenity">🧊 <b>Iced horchata coffee</b>, cold as a French counterattack, sweet as a Yamal nutmeg. Bottomless-ish.</div>
+  <div class="amenity">🧣 <b>Cooling towels</b>, chilled and distributed at halftime like a substitution you can wear.</div>
+  <div class="amenity">🪟 <b>A window unit</b> is in <i>advanced transfer negotiations</i>. Personal terms agreed; medical scheduled for the morning. We are told it "wants the move." Announcement pending. <span class="blink">HERE WE GO?</span></div>
+
+  <hr class="fancy">
+
+  <h2>⚔️ THE TALE OF THE TAPE ⚔️</h2>
+  <div class="tape">
+    <div class="fighter esp">
+      <h3><span class="spain">LAMINE YAMAL</span> 🇪🇸</h3>
+      Turned <b>19 years old YESTERDAY</b>, and intends to celebrate by making grown defenders reconsider their careers. Has been alive for fewer World Cups than some of my houseplants. Plays the sport the way Lorca wrote — left-footed, at dusk, unfairly.
+    </div>
+    <div class="fighter fra">
+      <h3><span class="france">KYLIAN MBAPPÉ</span> 🇫🇷</h3>
+      Runs faster than gossip. On Bastille Day, in a knockout match, a Frenchman with a cannon for a leg — this is not sport, this is <i>national theatre</i>. Bring an offside flag and a poem; you will need both and neither will help.
+    </div>
+  </div>
+  <p class="center footnote">One of these men will break our hearts. The other will also break our hearts, differently. Attendance mandatory for proper heartbreak distribution.</p>
+
+  <div class="gifrow"><img class="pixel" src="gifs/ball.gif" alt="spinning pixel soccer ball" width="120" height="120"></div>
+
+  <hr class="fancy">
+
+  <h2>🖋️ EL RINCÓN POÉTICO / LE COIN DES POÈTES 🖋️</h2>
+
+  <blockquote class="poem">
+    «Tout ce que je sais de plus sûr à propos de la moralité et des obligations des hommes, c'est au football que je le dois.»<br>
+    <span class="vs">"All that I know most surely about morality and the obligations of men, I owe to football."</span>
+    <cite>— Albert Camus, goalkeeper first, Nobel laureate as a fallback plan</cite>
+  </blockquote>
+
+  <blockquote class="poem">
+    <i>A las dos de la tarde.<br>
+    Eran las dos en punto de la tarde.<br>
+    Un sofá ya estaba dispuesto,<br>
+    a las dos de la tarde.<br>
+    Lo demás era calor y solamente calor,<br>
+    a las dos de la tarde.</i>
+    <cite>— after Federico García Lorca, <i>Llanto</i>, lightly rescheduled from five o'clock and moved indoors, with apologies to Andalusia</cite>
+  </blockquote>
+
+  <blockquote class="poem">
+    Unamuno wrote of <i>the tragic sense of life</i> — the ache of wanting something eternal while knowing nothing is. He was describing, with eerie precision, supporting a national team in a knockout round. Come feel infinite for ninety minutes plus stoppage.
+    <cite>— Miguel de Unamuno, paraphrased beyond what he'd tolerate</cite>
+  </blockquote>
+
+  <hr class="fancy">
+
+  <h2>📸 EVIDENCE OF VENUE 📸</h2>
+  <p class="center footnote">(exhibits arriving shortly — the gallery is being curated as we speak)</p>
+  <div class="polaroids">
+    <div class="polaroid"><div class="frame">exhibit A<br>forthcoming</div><b>Your host</b>, mid-anguish</div>
+    <div class="polaroid"><div class="frame">exhibit B<br>forthcoming</div><b>The dog</b>, official mascot, neutral party</div>
+    <div class="polaroid"><div class="frame">exhibit C<br>forthcoming</div><b>The television</b>, large enough for the occasion</div>
+    <div class="polaroid"><div class="frame">exhibit D<br>forthcoming</div><b>The couch</b>, undefeated at home</div>
+  </div>
+
+  <hr class="fancy">
+
+  <h2 id="rsvp">✉️ RÉPONDEZ, POR FAVOR ✉️</h2>
+  <p class="center" style="font-size:18px">Both buttons mean yes. There is no button for no. This is by design.</p>
+  <p class="center">
+    <a class="rsvp-btn rsvp-si"  href="mailto:pmcathey@gmail.com?subject=%C2%A1S%C3%8D!%20%E2%80%94%20I%20will%20be%20on%20the%20couch&body=Save%20me%20a%20cooling%20towel.%20Horchata%20coffee%20order%3A%20">¡SÍ!</a>
+    <a class="rsvp-btn rsvp-oui" href="mailto:pmcathey@gmail.com?subject=OUI!%20%E2%80%94%20je%20serai%20sur%20le%20canap%C3%A9&body=Save%20me%20a%20cooling%20towel.%20Horchata%20coffee%20order%3A%20">OUI !</a>
+  </p>
+  <p class="center footnote">or just text me like a normal person, which none of us are</p>
+
+  <div class="webring">
+    🔗 Proud member of the <b>IBERIA–GALLIA WEBRING</b> 🔗<br>
+    [ <a href="https://en.wikipedia.org/wiki/Spain_national_football_team">« prev</a> ]
+    [ <a href="https://en.wikipedia.org/wiki/Pyrenees">random</a> ]
+    [ <a href="https://en.wikipedia.org/wiki/France_national_football_team">next »</a> ]
+  </div>
+
+  <p class="center">
+    You are visitor № <span class="counter" id="hitcounter">0000000</span> to this page.<br>
+    <span class="footnote">counter certified accurate by the same officials reviewing the offside</span>
+  </p>
+
+  <p class="footnote">
+    Best viewed in Netscape Navigator 4.0 at 800×600 through a beaded curtain.<br>
+    Background music (<i>Boléro.mid</i>, 4.2&nbsp;MB) removed on the advice of counsel.<br>
+    No cookies on this site except, potentially, physical ones.<br>
+    <a href="/">⟵ return to the regularly scheduled portfolio of Paul Cathey</a>
+  </p>
+
+</div>
+
+<script>
+/* ---------------------------------------------- countdown to kickoff -- */
+(function () {
+  var kickoff = new Date('2026-07-14T14:00:00-07:00');
+  var el = document.getElementById('countdown');
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function tick() {
+    var ms = kickoff - new Date();
+    if (ms <= 0) {
+      el.textContent = '¡¡ EN VIVO / EN DIRECT !!';
+      el.classList.add('blink');
+      return;
+    }
+    var s = Math.floor(ms / 1000);
+    el.textContent = pad(Math.floor(s / 86400)) + ':' + pad(Math.floor(s / 3600) % 24) +
+                     ':' + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60);
+    setTimeout(tick, 1000);
+  }
+  tick();
+})();
+
+/* ------------------------------------------------- artisanal hit counter -- */
+(function () {
+  var n = 141789 + (Math.floor(Date.now() / 60000) % 8000); /* 1417+89: two revolutions */
+  document.getElementById('hitcounter').textContent = ('0000000' + n).slice(-7);
+})();
+
+/* -------------------------------- sparkle cursor trail, tricolor-bicolor -- */
+(function () {
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var glyphs = ['✦', '✧', '⚽', '✺', '·'];
+  var colors = ['#ffd900', '#a1131f', '#0055a4', '#ffffff', '#ef4135'];
+  var i = 0, last = 0;
+  function spawn(x, y) {
+    var s = document.createElement('span');
+    s.className = 'sparkle';
+    s.textContent = glyphs[i % glyphs.length];
+    s.style.color = colors[i % colors.length];
+    s.style.textShadow = '0 0 4px ' + colors[i % colors.length];
+    s.style.left = (x + (Math.random() * 14 - 7)) + 'px';
+    s.style.top  = (y + (Math.random() * 14 - 7)) + 'px';
+    document.body.appendChild(s);
+    setTimeout(function () { s.remove(); }, 1200);
+    i++;
+  }
+  addEventListener('mousemove', function (e) {
+    var now = Date.now();
+    if (now - last > 40) { spawn(e.clientX, e.clientY); last = now; }
+  });
+  addEventListener('touchmove', function (e) {
+    var t = e.touches[0];
+    var now = Date.now();
+    if (t && now - last > 60) { spawn(t.clientX, t.clientY); last = now; }
+  }, { passive: true });
+})();
+
+/* --------------------------- click anywhere: a tiny burst of ¡olé!/allez -- */
+(function () {
+  var words = ['¡OLÉ!', 'ALLEZ !', '¡VAMOS!', 'MAGNIFIQUE', 'GOOOOL', 'BUUUUT'];
+  addEventListener('click', function (e) {
+    if (e.target.closest('a')) return;
+    var s = document.createElement('span');
+    s.className = 'sparkle';
+    s.style.fontSize = '22px';
+    s.style.fontWeight = 'bold';
+    s.style.color = Math.random() < 0.5 ? '#a1131f' : '#0055a4';
+    s.textContent = words[Math.floor(Math.random() * words.length)];
+    s.style.left = e.clientX + 'px';
+    s.style.top = e.clientY + 'px';
+    document.body.appendChild(s);
+    setTimeout(function () { s.remove(); }, 1200);
+  });
+})();
+</script>
+</body>
+</html>
